@@ -1,0 +1,708 @@
+:root {
+    --primary-color: #b8860b;
+    --secondary-color: #ffd700;
+    --text-color: #ffaf00;
+    --text-subcolor: #fffcc5;
+    --icon-width: 240px;
+    --icon-height: 240px;
+    --num-icons: 9;
+    --reel-gap: 40px;
+    --font-size-large: 40px;
+    --font-size-medium: 30px;
+    --font-size-small: 16px;
+    --button-hover-scale: 1.1;
+    --change-button-hover-scale: 1.15;
+    --corner-button-hover-scale: 1.1;
+    --close-btn-hover-image: url('assets/close_button_hover.png');
+    --animation-duration: 0.3s;
+    --animation-ease: ease-out;
+    --pulse-color-primary: rgba(222, 11, 11, 1);
+    --pulse-color-secondary: rgba(161, 13, 13, 1);
+    --border-radius: 15px;
+    --box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    --container-gap: 20px;
+    --container-padding: calc(0.1 * var(--icon-height));
+    --button-size: 200px;
+    --spin-button-size: 300px;
+    --focus-outline: 3px solid #ffaf00;
+}
+
+* {
+    user-select: none; /* Забороняє виділення тексту та елементів */
+    -webkit-user-select: none; /* Для підтримки у Webkit-браузерах (Safari, старі версії Chrome) */
+    -moz-user-select: none; /* Для підтримки у Firefox */
+    -ms-user-select: none; /* Для підтримки у старих версіях Internet Explorer */
+}
+
+html, body {
+    height: 100%;
+}
+
+.logo {
+    margin-bottom: -15px;
+}
+
+.logo img {
+    max-width: 400px;
+    height: auto;
+}
+
+body {
+    background: linear-gradient(45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slot-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--container-gap);
+}
+
+.game-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slots {
+    width: calc(3 * var(--icon-width) + 2 * var(--reel-gap));
+    height: calc(3 * var(--icon-height));
+    padding: var(--container-padding);
+    display: flex;
+    justify-content: space-between;
+    gap: var(--reel-gap);
+    border: none;
+    margin-left: 150px;
+}
+
+.reel {
+    width: var(--icon-width);
+    height: calc(3 * var(--icon-height));
+    background-image: url('assets/golden_reel_bigger.png');
+    background-repeat: repeat-y;
+    background-position: 0 0;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border: none;
+    transition: transform var(--animation-duration) var(--animation-ease);
+}
+
+.reel:hover {
+    transform: scale(1.05);
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--container-gap);
+    position: absolute;
+    top: 13%;
+    right: 6%;
+    z-index: 600;
+}
+
+.button-icon {
+    width: var(--button-size);
+    height: var(--button-size);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    outline: none;
+}
+
+.button-icon:focus {
+    outline: var(--focus-outline);
+}
+
+.button-icon:hover {
+    transform: scale(var(--button-hover-scale));
+}
+
+.button-icon:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+.button-icon.spin {
+    width: var(--spin-button-size);
+    height: var(--spin-button-size);
+}
+
+/* Секція для рамок і текстів */
+.text-frames {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    left: 30px;
+    top: 60%;
+    transform: translateY(-50%);
+    padding-left: 20px;
+}
+
+.frame-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.frame-text, .frame-subtext {
+    position: absolute;
+    color: var(--text-color);
+    font-size: var(--font-size-medium);
+    font-family: "Rubik", sans-serif;
+    text-align: center;
+    width: 100%;
+    font-optical-sizing: auto;
+    font-weight: 450;
+    font-style: normal;
+}
+
+.frame-subtext {
+    top: 30px; /* Розташування додаткового тексту */
+    color: var(--text-subcolor);
+    font-size: var(--font-size-large);
+}
+
+.frame-large .frame-text {
+    font-size: var(--font-size-large);
+}
+
+.frame-medium .frame-text {
+    font-size: var(--font-size-medium);
+}
+
+.frame-small .frame-text {
+    font-size: var(--font-size-small);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.frame-small .frame-subtext {
+    font-size: var(--font-size-small);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.frame {
+    margin: 30px 0;
+}
+
+.frame-large {
+    width: 115%;
+}
+
+.frame-medium {
+    width: 95%;
+}
+
+.frame-small {
+    width: 70%;
+    margin-top: 100px;
+}
+
+.frame-text {
+    top: 10px;
+}
+
+.frame-subtext.large {
+    top: 30px;
+    font-size: 48px;
+}
+
+.frame-text.small {
+    top: 95px;
+    color: var(--text-subcolor);
+    font-size: 25px;
+}
+
+.frame-text.large {
+    top: 1px;
+    font-size: var(--font-size-large);
+}
+
+/* Стиль для кнопок */
+.change-button {
+    position: absolute;
+    top: 51%; /* Вирівнюємо по вертикалі */
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.change-button:focus {
+    outline: var(--focus-outline);
+}
+
+.change-button img {
+    width: 80px; /* Розмір зображення кнопок */
+    height: 80px;
+    transition: transform 0.2s ease;
+}
+
+.change-button img:hover {
+    transform: scale(var(--change-button-hover-scale));
+}
+
+.change-button:active img {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+.change-button.minus {
+    left: 14px; /* Розташування кнопки "-" ліворуч */
+}
+
+.change-button.plus {
+    right: 14px; /* Розташування кнопки "+" праворуч */
+}
+
+/* Стиль для контейнера з кнопками */
+.corner-buttons {
+    position: absolute;
+    top: 20px; /* Відступ зверху */
+    left: 20px; /* Відступ зліва */
+    display: flex;
+    flex-direction: row; /* Горизонтальне вирівнювання */
+    gap: 10px; /* Відстань між кнопками */
+}
+
+/* Стиль для самих кнопок */
+.corner-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    outline: none;
+}
+
+.corner-button:focus {
+    outline: var(--focus-outline);
+}
+
+.corner-button:hover {
+    transform: scale(var(--corner-button-hover-scale));
+}
+
+.corner-button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+.corner-button img {
+    width: 95px; /* Розмір зображень кнопок */
+    height: 95px;
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.frame-subtext.bet {
+    top: 45px;
+    font-size: var(--font-size-medium);
+}
+
+.paytable_and_paylines {
+    position: fixed; /* Фіксоване положення відносно всього вікна */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Напівпрозорий фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Найвищий пріоритет у відображенні */
+}
+
+.paytable_and_paylines img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Кнопка закриття */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+}
+
+.close-btn:focus {
+    outline: var(--focus-outline);
+}
+
+.close-btn img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Зміна зображення при наведенні */
+.close-btn:hover img {
+    content: var(--close-btn-hover-image);
+}
+
+.close-btn:active img {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+/* Спочатку приховуємо таблицю виплат */
+.hidden {
+    display: none;
+}
+
+.paylines {
+    position: absolute;
+    width: 800px; /* Можна встановити потрібну ширину контейнера */
+    height: 800px; /* Можна встановити потрібну висоту контейнера */
+    top: 200px;
+}
+
+@keyframes combined-pulse {
+    0% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px var(--pulse-color-primary)) drop-shadow(0 5px 5px var(--pulse-color-primary)) drop-shadow(0 -5px 5px var(--pulse-color-primary));
+    }
+    25% {
+        transform: scale(0.96);
+        filter: drop-shadow(0 0 5px var(--pulse-color-secondary)) drop-shadow(0 5px 5px var(--pulse-color-secondary)) drop-shadow(0 -5px 5px var(--pulse-color-secondary));
+    }
+    50% {
+        transform: scale(1.00);
+        filter: drop-shadow(0 0 5px var(--pulse-color-primary)) drop-shadow(0 5px 5px var(--pulse-color-primary)) drop-shadow(0 -5px 5px var(--pulse-color-primary));
+    }
+    75% {
+        transform: scale(0.96);
+        filter: drop-shadow(0 0 5px var(--pulse-color-secondary)) drop-shadow(0 5px 5px var(--pulse-color-secondary)) drop-shadow(0 -5px 5px var(--pulse-color-secondary));
+    }
+    100% {
+        transform: scale(1); 
+        filter: drop-shadow(0 0 5px var(--pulse-color-primary)) drop-shadow(0 5px 5px var(--pulse-color-primary)) drop-shadow(0 -5px 5px var(--pulse-color-primary));
+    }
+}
+
+.paylines img {
+    position: absolute; /* Накладання зображень */
+    animation: combined-pulse 3s infinite ease-in-out; /* Анімація комбінованої пульсації з плавним переходом */
+    will-change: transform, filter;
+    transform: translateZ(0);
+}
+
+.bottom-text {
+    position: absolute;
+    color: var(--text-subcolor);
+    font-size: 25px;
+    font-family: "Rubik", sans-serif;
+    text-align: center;
+    width: 100%;
+    font-optical-sizing: auto;
+    font-weight: 450;
+    font-style: normal;
+    bottom: -65px;
+}
+
+#win-banner {
+    position: absolute;
+    top: 50%; /* Центрування по вертикалі */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: 'Rubik', sans-serif;
+    animation: fadeIn 1s ease-in-out; /* Плавна поява */
+    z-index: 1000;
+    white-space: nowrap; /* Забороняємо перенос тексту на новий рядок */
+}
+
+/* Стиль для заголовка виграшу, наприклад "BIG WIN" */
+#win-type {
+    font-size: 13em;
+    background: linear-gradient(180deg, #c71628, #eb9809, #e8b305, #a60505); 
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0; /* Прибираємо зайву відстань */
+    white-space: nowrap; /* Забороняємо перенос тексту на новий рядок */
+    animation: combined-pulse 3s infinite ease-in-out;
+    font-style: italic;
+    cursor: pointer;
+}
+
+/* Стиль для суми виграшу */
+#win-amount {
+    font-size: 9em;
+    background: linear-gradient(180deg, #c71628, #eb9809, #e8b305, #a60505); 
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-top: 0; /* Зменшуємо відстань між заголовком і сумою */
+    white-space: nowrap; /* Забороняємо перенос тексту на новий рядок */
+    animation: combined-pulse 3s infinite ease-in-out;
+    font-weight: 850;
+    font-style: italic;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Напівпрозоре затемнення */
+    z-index: 999; /* Високий пріоритет у відображенні */
+    
+}
+
+#overlay.hidden {
+    display: none;
+}
+
+@keyframes hitEffect {
+    0% { transform: translate(-50%, -50%) scale(0); }
+    50% { transform: translate(-50%, -50%) scale(1.5); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes textChangedEffect {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.5); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes finalHitEffect {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.5); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.lever {
+    position: absolute;
+    top: -20px; /* Відступ від верхнього краю екрану */
+    right: 345px; /* Відступ від правого краю екрану */
+    transform: rotate(5deg) scale(0.55);
+    transform-origin: bottom right; /* Точка обертання внизу праворуч для правильного нахилу */
+    cursor: pointer;
+    transition: transform 0.3s ease, top 0.3s ease, right 0.3s ease; /* Плавний перехід для обертання, переміщення вниз і вліво */
+    outline: none;
+}
+
+.lever:focus {
+    outline: var(--focus-outline);
+}
+
+.lever:hover {
+    transform: rotate(5deg) scale(0.65);
+}
+
+.lever.pull-down {
+    transform: rotate(-40deg) scale(0.55); /* Обертання вниз для опускання рукоятки */
+    top: 20px; /* Зміщення вниз для ефекту руху важеля */
+    right: 340px; /* Зміщення вліво для імітації руху по колу кнопки */
+    transition: transform 0.3s ease-in-out, top 0.3s ease-in-out, right 0.3s ease-in-out; /* Плавна анімація руху */
+}
+
+.lever:active {
+    transform: rotate(5deg) scale(0.45);
+    transition: transform 0.1s ease;
+}
+
+.advanced-auto-settings-container {
+    position: absolute;
+    top: 200px; /* Положення контейнера по вертикалі */
+    right: 670px; /* Положення контейнера по горизонталі */
+    width: 0; /* Спочатку контейнер має нульову видиму ширину */
+    height: 400px;
+    transition: width 0.5s ease-in-out; /* Плавний перехід для розширення контейнера */
+    z-index: 500; /* Перекриває барабани */
+}
+
+.advanced-auto-settings-container.show {
+    width: 300px; /* Показуємо панель, розширюючи контейнер до повного розміру */
+}
+
+.advanced-auto-settings-panel {
+    width: 300px; /* Ширина панелі налаштувань */
+    height: 400px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out; /* Плавна анімація видимості */
+    position: relative;
+}
+
+.advanced-auto-settings-panel.show {
+    opacity: 1; /* Робимо панель видимою */
+}
+
+.settings-buttons {
+    position: absolute;
+    top: 130px; /* Відступ від верхнього краю панелі */
+    left: 35px; /* Відступ від лівого краю панелі */
+}
+
+.setting-button {
+    cursor: pointer;
+    transition: filter 0.3s ease;
+}
+
+.setting-button:hover {
+    filter: brightness(0.7); /* Затемнення кнопки при наведенні */
+}
+
+.number-of-rounds {
+    display: grid;
+    grid-template-columns: repeat(4, 100px); /* Дві колонки для кнопок */
+    gap: 10px; /* Відстань між кнопками */
+}
+
+.switch-button {
+    margin-top: 90px;
+}
+
+.lose-limit {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: repeat(2, 200px); /* Дві колонки для кнопок */
+    gap: 20px; /* Відстань між кнопками */
+}
+
+.button-20x {
+    margin-left: -10px;
+}
+
+.button-50x {
+    margin-top: -10px;
+}
+
+.lose_limit_endless_button {
+    margin-top: -10px;
+}
+
+.individual_settings_lose_limit_button {
+    margin-top: -10px;
+}
+
+.auto-info-container {
+    position: relative; /* Контейнер відносний, щоб дочірні елементи позиціонувались відносно нього */
+    display: flex; /* Використовуємо flexbox для центровання */
+    justify-content: center; /* Центрування по горизонталі */
+    align-items: center; /* Центрування по вертикалі */
+    width: 150px;
+    height: 70px;
+    top: -468px;
+    left: 188px;
+}
+
+.auto-info {
+    color: var(--text-subcolor);
+    font-size: 125px;
+    font-family: "Rubik", sans-serif;
+    text-align: center;
+    font-optical-sizing: auto;
+    font-weight: 450;
+    font-style: normal;
+    opacity: 0;
+}
+
+
+
+#individual-settings-lose-limit-button {
+    position: relative;
+    cursor: pointer;
+    outline: none;
+}
+
+.individual-settings-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    width: 425px;
+    height: 52px;
+    bottom: 10px;
+    right: 220px;
+}
+
+#individual-input {
+    position: absolute;
+    width: 425px;
+    height: 52px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 1.5em;
+    border: none;
+    background: transparent;
+    color: var(--text-subcolor);
+    font-family: "Rubik", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 450;
+    font-style: normal;
+    outline: none;
+    z-index: 700;
+}
+
+#individual-input.hidden {
+    display: none;
+}
+
+#individual-input.inactive {
+    border: none; /* Відсутність рамки, щоб виглядати неактивним */
+    background-color: transparent; /* Прозорий фон */
+    color: var(--text-subcolor); /* Колір тексту як для неактивного стану */
+    cursor: default; /* Курсор не вказує на можливість редагування */
+}
+
+#loss_limit_reached_banner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 774px;
+    height: 378px;
+    text-align: center;
+    z-index: 1000;
+    display: none;
+}
+
+.banner-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Щоб зображення відповідало розмірам банера */
+}
+
+.banner-button {
+    position: absolute;
+    bottom: 55px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+}
+
+.banner-button:hover {
+    filter: brightness(0.7); /* Затемнення кнопки при наведенні */
+}
