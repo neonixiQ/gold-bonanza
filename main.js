@@ -102,6 +102,7 @@ const roll = (reel, offset = 0) => {
           targetBackgroundPositionY = backgroundPositionYinVH + delta * icon_height,
           normTargetBackgroundPositionY = targetBackgroundPositionY % (num_icons * icon_height);
 
+
     console.log(`backgroundPositionY ${backgroundPositionY} px`);
     console.log(`backgroundPositionY ${(backgroundPositionY / window.innerHeight) * 100} vh`);
     console.log(`backgroundPositionYinVH ${backgroundPositionYinVH} vh`);
@@ -113,7 +114,18 @@ const roll = (reel, offset = 0) => {
 
         setTimeout(() => {
             reel.style.transition = "none";
-            reel.style.backgroundPositionY = `${normTargetBackgroundPositionY}vh`;
+
+            const symbol_index = (indexes[offset] + delta) % num_icons;
+
+            if (iconMap[symbol_index] === 'seven') {
+                console.log('Setting backgroundPositionY = 0');
+        
+                reel.style.backgroundPositionY = `0px`;
+
+            } else {
+                reel.style.backgroundPositionY = `${normTargetBackgroundPositionY}vh`;
+            }
+            
             resolve(delta % num_icons);
 
             // Playing reel_stops sound
