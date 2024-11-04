@@ -76,7 +76,7 @@
 
             <div class="advanced-auto-settings-container">
                 <div class="advanced-auto-settings-panel hidden" id="advanced-auto-settings-panel">
-                    <img src="assets/advanced_auto_settings.png" alt="Advanced Auto Settings Panel">
+                    <img src="assets/advanced_auto_settings.png" alt="Advanced Auto Settings Panel" class="advanced_auto_settings">
                     <div class="settings-buttons">
                         <div class="number-of-rounds">
                             <img id="25-button" src="assets\25_button.png" alt="25" class="setting-button play-sound" data-selected-src="assets\25_button_on.png" onclick="playSound()">
@@ -94,7 +94,7 @@
                         </div>
 
                         <div class="lose-limit">
-                            <img id="5X-button" src="assets\5X_button.png" alt="5X" class="setting-button" data-selected-src="assets\5X_button_on.png" onclick="playSound()">
+                            <img id="5X-button" src="assets\5X_button.png" alt="5X" class="setting-button button-5x" data-selected-src="assets\5X_button_on.png" onclick="playSound()">
                             <img id="20X-button" src="assets\20X_button.png" alt="20X" class="setting-button button-20x" data-selected-src="assets\20X_button_on.png" onclick="playSound()">
                             <img id="50X-button" src="assets\50X_button.png" alt="50X" class="setting-button button-50x" data-selected-src="assets\50X_button_on.png" onclick="playSound()">
                             <img id="endless-lose-limit-button" src="assets\∞_lose_limit_button.png" alt="∞" class="setting-button lose_limit_endless_button" data-selected-src="assets\∞_lose_limit_button_on.png" onclick="playSound()">
@@ -130,10 +130,12 @@
 
         <!-- Таблиця виплат та лінії, спочатку приховані -->
         <div class="paytable_and_paylines hidden">
-            <img src="assets/paytable_and_paylines.png" alt="Paytable and paylines">
-            <button class="close-btn play-sound">
-                <img src="assets/close_button.png" alt="Close">
-            </button>
+            <img src="assets/paytable_and_paylines.png" alt="Paytable and paylines" class="paytable-img">
+            <div class="close-btn-container">
+                <button class="close-btn play-sound">
+                    <img src="assets/close_button.png" alt="Close">
+                </button>
+            </div>
         </div>
 
         <!-- Paylines -->
@@ -148,6 +150,11 @@
         </div>
     </div>
 
+    <div class="portrait-mode">
+        <div id="fade-overlay" class="fade-overlay"></div>
+        <img src="assets\rotate_your_phone.gif" alt="Rotate Your Phone" class="rotate-your-phone-gif">
+    </div>
+
     <audio id="button-sound" src="assets\button_click.mp3"></audio>
     <audio id="reels-spinning-sound" src="assets\reels_spinning.mp3"></audio>
     <audio id="reel-stops-sound" src="assets\reel_stops.mp3"></audio>
@@ -157,8 +164,5 @@
     <audio id="opening-sound" src="assets\opening_sound.mp3"></audio>
     <audio id="payout-sound" src="assets\payout_sound.mp3"></audio>
     <audio id="payout-sound-without-applause" src="assets\payout_sound without applause.mp3"></audio>
-
-
-    <p class="bottom-text">Developed by Alex Zalishchuk 🏆</p>
 </body>
 </html>

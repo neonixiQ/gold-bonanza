@@ -14,12 +14,12 @@ let autoSettings = {
     numberOfRoundsRemaining: 0,
     sumOfAllBets: 0,
     sumOfAllWinnings: 0,
+    autoStopped: false,
 }
 
 let time_per_icon = 100;  // Початкове значення для Turbo 1
 
-const icon_width = 243,
-      icon_height = 243,
+const icon_height = 25.18,
       num_icons = 9,
       indexes = [0, 0, 0],
       iconMap = ["seven", "lucky clover", "plum", "bar", "watermelon", "lemon", "cherry", "grape", "dice"];
@@ -98,16 +98,17 @@ const roll = (reel, offset = 0) => {
 
     const style = getComputedStyle(reel),
           backgroundPositionY = parseFloat(style["background-position-y"]),
-          targetBackgroundPositionY = backgroundPositionY + delta * icon_height,
+          targetBackgroundPositionY = ((backgroundPositionY / window.innerHeight) * 100) + delta * icon_height,
           normTargetBackgroundPositionY = targetBackgroundPositionY % (num_icons * icon_height);
+    
 
     return new Promise((resolve) => {
         reel.style.transition = `background-position-y ${8 + delta * turboTimePerIcon}ms cubic-bezier(.45,.05,.95,1)`;
-        reel.style.backgroundPositionY = `${targetBackgroundPositionY}px`;
+        reel.style.backgroundPositionY = `${targetBackgroundPositionY}vh`;
 
         setTimeout(() => {
             reel.style.transition = "none";
-            reel.style.backgroundPositionY = `${normTargetBackgroundPositionY}px`;
+            reel.style.backgroundPositionY = `${normTargetBackgroundPositionY}vh`;
             resolve(delta % num_icons);
 
             // Playing reel_stops sound
@@ -178,11 +179,13 @@ function rollAll() {
                     indexes.map((index) => { console.log(iconMap[index]) });
 
                     checkAllWinningLines(newBalance, winSound);
-                    
-                    buttonStates.spin = false;
-                    setButtonImage(spinButton);
 
-                    spinButton.style.pointerEvents = 'auto';
+                    if (buttonStates['auto'] === false) {
+                        spinButton.style.pointerEvents = 'auto';
+                        
+                        changeImage(spinButton, 'spin');
+                    }
+
                     autoButton.style.pointerEvents = 'auto';
 
                     resolve(); // Завершуємо Promise після завершення обертання
@@ -194,16 +197,11 @@ function rollAll() {
 
 
 async function autoGame(continue_spinning = false, recursion = false) {
-    console.log(`loseLimit ${autoSettings['loseLimit']}`);
-    console.log(`sumOfAllBets ${autoSettings['sumOfAllBets']}`);
-    console.log(`sumOfAllWinnings ${autoSettings['sumOfAllWinnings']}`);
-
     const autoInfoElement = document.querySelector('.auto-info');
     let roundsToSpin = 0;
 
     if (continue_spinning) {
         roundsToSpin = autoSettings['numberOfRoundsRemaining'];
-        console.log('continue spinning...');
     } else {
         roundsToSpin = autoSettings['numberOfRounds'];
         autoInfoElement.style.opacity = 1; // Показуємо елемент
@@ -217,8 +215,6 @@ async function autoGame(continue_spinning = false, recursion = false) {
             autoInfoElement.textContent = autoSettings['numberOfRounds'];
         }
     }
-
-    console.log(`buttonStates['auto'] ${buttonStates['auto']}`);
 
     if (buttonStates['auto']) {
         if (autoSettings['numberOfRounds'] === 0) {
@@ -234,6 +230,12 @@ async function autoGame(continue_spinning = false, recursion = false) {
 
                 banner.style.display = 'block';
                 overlay.classList.remove('hidden');
+
+                const spinButton = document.querySelector('.button-icon.spin');
+
+                spinButton.style.pointerEvents = 'auto';
+                buttonStates['spin'] = false;
+                setButtonImage(spinButton);
 
             } else {
                 await rollAll(); // Чекаємо завершення обертання перед запуском наступного раунду
@@ -258,9 +260,13 @@ async function autoGame(continue_spinning = false, recursion = false) {
                     banner.style.display = 'block';
                     overlay.classList.remove('hidden');
 
+                    const spinButton = document.querySelector('.button-icon.spin');
+
+                    spinButton.style.pointerEvents = 'auto';
+                    buttonStates['spin'] = false;
+                    setButtonImage(spinButton);
+
                 } else {
-                    console.log(`roundsToSpin ${roundsToSpin}`);
-                    console.log(`roundNumber ${roundNumber}`);
                     if (buttonStates['auto']) {
                         if (continue_spinning) {
                             autoSettings['numberOfRoundsRemaining'] = roundsToSpin - roundNumber;
@@ -276,7 +282,12 @@ async function autoGame(continue_spinning = false, recursion = false) {
             }
             if (buttonStates['auto']) {
                 const autoButton = document.querySelector('.button-icon.auto');
+                const spinButton = document.querySelector('.button-icon.spin');
+
                 changeImage(autoButton, 'auto');
+                spinButton.style.pointerEvents = 'auto';
+                buttonStates['spin'] = false;
+                setButtonImage(spinButton);
             }
         }
     }
@@ -303,8 +314,6 @@ function checkAllWinningLines(currentBalance, winSound) {
 
 // Функція для приховування банера
 function hideWinBanner() {
-    console.log('win banner hidden');
-
     const payoutSound = document.getElementById('payout-sound');
     payoutSound.pause();
 
@@ -313,12 +322,19 @@ function hideWinBanner() {
     winBanner.classList.add('hidden');
     overlay.classList.add('hidden');
 
-    console.log(`stopAfterBigPayout: ${autoSettings['stopAfterBigPayout']}`);
-
-    if (autoSettings['stopAfterBigPayout'] === false) {
-        console.log(`one more auto for ${autoSettings['numberOfRoundsRemaining']} rounds...`);
-
+    if (autoSettings['autoStopped']) {
         buttonStates['auto'] = true;
+        autoSettings['autoStopped'] = false;
+    }
+
+    if (autoSettings['stopAfterBigPayout'] === false && buttonStates['auto'] === true) {
+        const leverButton = document.querySelector('.lever');
+        leverButton.style.pointerEvents = 'none'; // Забороняємо взаємодію з кнопкою
+        leverButton.style.cursor = 'default'; // Міняємо курсор на звичайний (не клікабельний)
+
+        const autoButton = document.querySelector('.button-icon.auto');
+        console.log(buttonStates['auto']);
+        setButtonImage(autoButton);
 
         autoGame(true);
     }
@@ -336,12 +352,12 @@ function hideBanner() {
 
 function showWinBanner(type, amount) {
     if (buttonStates['auto']) {
-        console.log(`autoSettings['stopAfterBigPayout'] ${autoSettings['stopAfterBigPayout']}`);
         if (autoSettings['stopAfterBigPayout']) {
             const autoButton = document.querySelector('.button-icon.auto');
             changeImage(autoButton, 'auto');
         } else {
             buttonStates['auto'] = false;
+            autoSettings['autoStopped'] = true;
         }
     }
 
@@ -437,6 +453,14 @@ function showWinBanner(type, amount) {
             winType.removeEventListener('click', skipAnimation);
     
             setTimeout(addHideEventListener, 1000); // Додаємо обробник приховування після завершення фінальної анімації
+        }
+
+        console.log(`autoSettings['autoStopped'] ${autoSettings['autoStopped']}`);
+        console.log(`buttonStates['auto'] ${buttonStates['auto']}`);
+
+        if (autoSettings['autoStopped']) {
+            const autoButton = document.querySelector('.button-icon.auto');
+            autoButton.src = 'assets/auto_button_on.png';
         }
     };
 
@@ -547,26 +571,36 @@ function changeImage(button, buttonType) {
         buttonStates[buttonType] = !buttonStates[buttonType];  // Перемикаємо стан кнопки
     }
 
-    if (buttonType === 'auto' && !buttonStates[buttonType]) {
-        const autoInfoElement = document.querySelector('.auto-info');
-        autoInfoElement.style.opacity = 0;
+    if ((buttonType === 'auto' || buttonType === 'spin') && !buttonStates[buttonType]) {
+        if (buttonType === 'auto') {
+            const autoInfoElement = document.querySelector('.auto-info');
+            autoInfoElement.style.opacity = 0;
+        }
 
         const leverButton = document.querySelector('.lever');
         leverButton.style.pointerEvents = 'auto'; // Дозволяємо взаємодію з кнопкою
         leverButton.style.cursor = 'pointer'; // Повертаємо курсор "вказівник руки"
 
-    } else if (buttonType === 'auto' && buttonStates[buttonType]) {
+    } else if ((buttonType === 'auto' || buttonType === 'spin') && buttonStates[buttonType]) {
         // Знаходимо контейнер та панель з налаштуваннями
         const advancedAutoSettingsContainer = document.querySelector('.advanced-auto-settings-container');
         const advancedAutoSettingsPanel = document.getElementById('advanced-auto-settings-panel');
 
         // Перевіряємо, чи панель відкрита
         const isPanelVisible = advancedAutoSettingsContainer.classList.contains('show');
+        // Отримуємо всі зображення всередині <div class="settings-buttons">
+        const images = document.querySelectorAll('.settings-buttons img');
 
         if (isPanelVisible) {
             // Якщо панель відкрита, ховаємо її
             advancedAutoSettingsContainer.classList.remove('show');
             advancedAutoSettingsPanel.classList.remove('show');
+
+            // Додаємо кожному зображенню потрібні стилі
+            images.forEach((img) => {
+                img.style.pointerEvents = 'none'; // Вимикаємо можливість взаємодії
+                img.style.cursor = 'default';     // Змінюємо курсор на стандартний
+            });
         }
 
         const leverButton = document.querySelector('.lever');
@@ -587,16 +621,31 @@ function pullLever(leverElement) {
 
     // Перевіряємо, чи панель відкрита
     const isPanelVisible = advancedAutoSettingsContainer.classList.contains('show');
+    // Отримуємо всі зображення всередині <div class="settings-buttons">
+    const images = document.querySelectorAll('.settings-buttons img');
 
     if (isPanelVisible) {
         // Якщо панель відкрита, ховаємо її
         advancedAutoSettingsContainer.classList.remove('show');
         advancedAutoSettingsPanel.classList.remove('show');
+
+        // Додаємо кожному зображенню потрібні стилі
+        images.forEach((img) => {
+            img.style.pointerEvents = 'none'; // Вимикаємо можливість взаємодії
+            img.style.cursor = 'default';     // Змінюємо курсор на стандартний
+        });
+
     } else {
         // Якщо панель прихована, показуємо її
         advancedAutoSettingsContainer.classList.add('show');
         advancedAutoSettingsPanel.classList.remove('hidden');
         advancedAutoSettingsPanel.classList.add('show');
+
+        // Додаємо кожному зображенню потрібні стилі
+        images.forEach((img) => {
+            img.style.pointerEvents = 'auto'; // Вимикаємо можливість взаємодії
+            img.style.cursor = 'pointer';     // Змінюємо курсор на стандартний
+        });
     }
 
     // Повертаємо важіль в початкове положення через 500 мілісекунд
@@ -630,11 +679,11 @@ numberOfRoundsButtons.forEach(button => {
         let numberOfRounds = /^[0-9]+$/.test(button.id.split('-')[0]) ? parseInt(button.id.split('-')[0], 10) : button.id.split('-')[0];
 
         if (numberOfRounds === 'endless') {
-            autoInfoElement.style.fontSize = '125px';
+            autoInfoElement.style.fontSize = '6.51vw';
             autoInfoElement.textContent = '∞';
             autoSettings['numberOfRounds'] = 0;
         } else {
-            autoInfoElement.style.fontSize = '55px';
+            autoInfoElement.style.fontSize = '2.86vw';
             autoInfoElement.textContent = numberOfRounds;
             autoSettings['numberOfRounds'] = numberOfRounds;
         }
@@ -697,6 +746,12 @@ window.onload = () => {
         changeImage(autoButton, 'auto');
         if (buttonStates.auto) {
             autoGame(false);
+
+        } else {
+            const spinButton = document.querySelector('.button-icon.spin');
+            buttonStates['spin'] = false;
+            setButtonImage(spinButton);
+            spinButton.style.pointerEvents = 'auto';
         }
     };
 
@@ -707,9 +762,11 @@ window.onload = () => {
         setButtonImage(spinButton);
     };
     spinButton.onclick = () => {
-        changeImage(spinButton, 'spin');
-        if (!buttonStates.auto) {
-            rollAll();
+        if (!buttonStates['auto']) {
+            changeImage(spinButton, 'spin');
+            if (!buttonStates.auto) {
+                rollAll();
+            }
         }
     };
 
@@ -885,14 +942,54 @@ window.onload = () => {
         // Зберігаємо початкове зображення в атрибуті
         button.setAttribute('data-original-src', button.src);
     });
+
+
+
+    function handleOrientationChange(event) {
+        const slotContainer = document.querySelector('.slot-container');
+        const portraitMode = document.querySelector('.portrait-mode');
+
+        if (event.matches) {
+            // Ландшафтний режим
+
+            slotContainer.classList.remove('hidden');
+            portraitMode.classList.add('hidden');
+
+            slotContainer.style.opacity = 1;
+            portraitMode.style.opacity = 0;
+
+            console.log('Ландшафтний режим');
+
+        } else {
+            // Портретний режим
+
+            slotContainer.classList.add('hidden');
+            portraitMode.classList.remove('hidden');
+
+            slotContainer.style.opacity = 0;
+            portraitMode.style.opacity = 1;
+
+            console.log('Портретний режим');
+        }
+    }
+
+    // Використовуємо matchMedia для відстеження змін орієнтації
+    const landscapeQuery = window.matchMedia("(orientation: landscape)");
+    landscapeQuery.addEventListener("change", handleOrientationChange);
+
+    // Перевірка початкової орієнтації при завантаженні сторінки
+    handleOrientationChange(landscapeQuery);
     
 };
+
 
 
 // Відкриття/закриття таблиці виплат
 document.querySelector('.info-button').addEventListener('click', () => {
     const paytable = document.querySelector('.paytable_and_paylines');
     paytable.classList.toggle('hidden'); // Відкриває або закриває таблицю
+
+    setDivSizeToImage();
 });
 
 document.querySelector('.close-btn').addEventListener('click', () => {
@@ -914,3 +1011,26 @@ const buttons = document.querySelectorAll('.play-sound');
 buttons.forEach(button => {
   button.addEventListener('click', playSound); // Відтворюємо звук при натисканні
 });
+
+
+
+// Отримуємо елементи
+const paytableImg = document.querySelector('.paytable-img');
+const closeBtnContainer = document.querySelector('.close-btn-container');
+
+// Функція для встановлення розміру div за розмірами зображення
+function setDivSizeToImage() {
+    // Отримуємо ширину і висоту зображення
+    const imgWidth = paytableImg.clientWidth;
+    const imgHeight = paytableImg.clientHeight;
+
+    // Встановлюємо отримані розміри для div
+    closeBtnContainer.style.width = `${imgWidth}px`;
+    closeBtnContainer.style.height = `${imgHeight}px`;
+}
+
+// Викликаємо функцію для початкового встановлення розмірів
+setDivSizeToImage();
+
+// Якщо потрібно оновлювати розміри при зміні вікна (адаптивність)
+window.addEventListener('resize', setDivSizeToImage);
