@@ -98,8 +98,13 @@ const roll = (reel, offset = 0) => {
 
     const style = getComputedStyle(reel),
           backgroundPositionY = parseFloat(style["background-position-y"]),
-          targetBackgroundPositionY = ((backgroundPositionY / window.innerHeight) * 100) + delta * icon_height,
+          backgroundPositionYinVH = parseFloat(((backgroundPositionY / window.innerHeight) * 100).toFixed(2)),
+          targetBackgroundPositionY = backgroundPositionYinVH + delta * icon_height,
           normTargetBackgroundPositionY = targetBackgroundPositionY % (num_icons * icon_height);
+
+    console.log(`backgroundPositionY ${backgroundPositionY} px`);
+    console.log(`backgroundPositionY ${(backgroundPositionY / window.innerHeight) * 100} vh`);
+    console.log(`backgroundPositionYinVH ${backgroundPositionYinVH} vh`);
     
 
     return new Promise((resolve) => {
