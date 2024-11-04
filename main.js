@@ -97,7 +97,7 @@ const roll = (reel, offset = 0) => {
     const turboTimePerIcon = buttonStates.turbo === 1 ? 100 : buttonStates.turbo === 2 ? 50 : 25;
 
     const style = getComputedStyle(reel),
-          backgroundPositionY = Math.round(parseFloat(style["background-position-y"]) * 10) / 10,
+          backgroundPositionY = Math.floor(parseFloat(style["background-position-y"]) * 10) / 10,
           backgroundPositionYinVH = Math.floor((backgroundPositionY / window.innerHeight) * 100 * 100) / 100,
           targetBackgroundPositionY = backgroundPositionYinVH + delta * icon_height,
           normTargetBackgroundPositionY = targetBackgroundPositionY % (num_icons * icon_height);
