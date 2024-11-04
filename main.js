@@ -980,6 +980,23 @@ window.onload = () => {
     // Перевірка початкової орієнтації при завантаженні сторінки
     handleOrientationChange(landscapeQuery);
     
+
+
+    // Функція для переходу в повноекранний режим
+    function openFullscreen() {
+        const elem = document.documentElement; // Вибираємо весь документ для повноекранного режиму
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { // Safari
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { // IE11
+            elem.msRequestFullscreen();
+        }
+    }
+
+    // Додаємо обробник події до всього документа
+    document.addEventListener('click', openFullscreen);
+
 };
 
 
