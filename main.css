@@ -102,10 +102,6 @@ body {
     transition: transform var(--animation-duration) var(--animation-ease);
 }
 
-.reel:hover {
-    transform: scale(1.05);
-}
-
 .buttons {
     display: flex;
     flex-direction: column;
@@ -807,4 +803,44 @@ body {
     0% { background-color: rgba(0, 0, 0, 0); }
     50% { background-color: rgba(0, 0, 0, 0.5); }
     100% { background-color: rgba(0, 0, 0, 0); }
+}
+
+.full-screen-mode-btn {
+    background-color: transparent; /* Робимо фон кнопки прозорим */
+    border: none; /* (Не обов'язково) Прибираємо рамку, якщо вона не потрібна */
+    position: absolute;
+    top: 2.099vh;
+    right: 1.042vw;
+    transition: transform 0.2s ease;
+    outline: none;
+}
+
+.full-screen-mode-btn:hover {
+    transform: scale(var(--corner-button-hover-scale));
+}
+
+.full-screen-mode-btn img {
+    width: 20vw;
+    height: 20vw;
+    cursor: pointer; /* Залишаємо курсор у вигляді руки для клікабельності */
+}
+
+.landscape-mode-full-screen-mode-btn {
+    background-color: transparent; /* Робимо фон кнопки прозорим */
+    border: none; /* (Не обов'язково) Прибираємо рамку, якщо вона не потрібна */
+    position: absolute;
+    top: -2vh;
+    right: -1.042vw;
+    transition: transform 0.2s ease;
+    outline: none;
+}
+
+.landscape-mode-full-screen-mode-btn:hover {
+    transform: scale(var(--corner-button-hover-scale));
+}
+
+.landscape-mode-full-screen-mode-btn img {
+    width: 9vw;
+    height: 9vw;
+    cursor: pointer; /* Залишаємо курсор у вигляді руки для клікабельності */
 }

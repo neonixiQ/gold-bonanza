@@ -4,7 +4,8 @@ let buttonStates = {
     spin: false,
     turbo: 1,  // Стани для Turbo: 1, 2 або 3
     volume: true, // Стан для Volume (on/off)
-    info: false // Стан для Info (за потребою)
+    info: false, // Стан для Info (за потребою)
+    fullScreenMode: false,
 };
 
 let autoSettings = {
@@ -41,6 +42,8 @@ let betValues = [0.25, 0.50, 0.75, 1, 1.5, 2, 2.5, 5, 10, 20, 25, 50];
 let currentBetIndex = 3; // Початкова ставка 1 ФАНТІКІВ (індекс 3)
 
 let visiblePaylineIndex = -1; // Індекc поточної видимої лінії (-1 означає, що жодна лінія не видима)
+
+let fullScreenModeActivated = false;
 
 const minusButton = document.querySelector('.change-button.minus');
 const plusButton = document.querySelector('.change-button.plus');
@@ -565,7 +568,15 @@ function setButtonImage(button) {
         info: {
             default: 'assets/info_button.png',
             hover: 'assets/info_button_hover.png'
-        }
+        },
+        landscapeModeFullScreenModeBtn: {
+            on: 'assets\exit_full-screen_button.png',
+            default: 'assets\open_full-screen_button.png',
+        },
+        FullScreenModeBtn: {
+            on: 'assets\exit_full-screen_button.png',
+            default: 'assets\open_full-screen_button.png',
+        },
     };
 
     if (button.classList.contains('auto')) {
@@ -578,6 +589,10 @@ function setButtonImage(button) {
         button.src = buttonStates.volume ? images.volume.on : images.volume.off;
     } else if (button.classList.contains('info')) {
         button.src = images.info.default;
+    } else if (button.classList.contains('landscapeModeFullScreenModeBtn')) {
+        button.src = buttonStates.fullScreenMode ? images.landscapeModeFullScreenModeBtn.on : images.landscapeModeFullScreenModeBtn.default;
+    } else if (button.classList.contains('FullScreenModeBtn')) {
+        button.src = buttonStates.fullScreenMode ? images.FullScreenModeBtn.on : images.FullScreenModeBtn.default;
     }
 }
 
@@ -813,6 +828,109 @@ window.onload = () => {
     infoButton.onclick = () => changeImage(infoButton, 'info');
 
 
+
+    // Функція для переходу в повноекранний режим
+    function openFullscreen() {
+        buttonStates.fullScreenMode = true;
+
+        const elem = document.documentElement; // Вибираємо весь документ для повноекранного режиму
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { // Safari
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { // IE11
+            elem.msRequestFullscreen();
+        }
+    }
+
+
+    function exitFullscreen() {
+        buttonStates.fullScreenMode = false;
+
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { // Safari
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { // IE11
+            document.msExitFullscreen();
+        }
+    }
+
+
+
+    const landscapeModeFullScreenModeBtn = document.querySelector('.landscape-mode-full-screen-mode-btn img');
+
+    landscapeModeFullScreenModeBtn.onmouseenter = () => {
+        landscapeModeFullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets/exit_full-screen_button_hover.png' : 'assets/open_full-screen_button_hover.png';
+    };
+    landscapeModeFullScreenModeBtn.onmouseleave = () => {
+        landscapeModeFullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets/exit_full-screen_button.png' : 'assets/open_full-screen_button.png';
+    };
+    landscapeModeFullScreenModeBtn.onclick = () => {
+        if (buttonStates['fullScreenMode']) {
+            exitFullscreen();
+        } else {
+            openFullscreen();
+        }
+
+        setButtonImage(landscapeModeFullScreenModeBtn);
+    };
+
+
+
+    const FullScreenModeBtn = document.querySelector('.full-screen-mode-btn img');
+
+    FullScreenModeBtn.onmouseenter = () => {
+        FullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets/exit_full-screen_button_hover.png' : 'assets/open_full-screen_button_hover.png';
+    };
+    FullScreenModeBtn.onmouseleave = () => {
+        FullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets/exit_full-screen_button.png' : 'assets/open_full-screen_button.png';
+    };
+    FullScreenModeBtn.onclick = () => {
+        if (buttonStates['fullScreenMode']) {
+            exitFullscreen();
+        } else {
+            openFullscreen();
+        }
+
+        setButtonImage(FullScreenModeBtn);
+    };
+
+
+
+    window.onresize = function(){
+        if(window.innerHeight == screen.height && buttonStates.fullScreenMode === false){
+            fullScreenModeActivated = true;
+            buttonStates.fullScreenMode = true;
+            FullScreenModeBtn.src = 'assets/exit_full-screen_button.png';
+            landscapeModeFullScreenModeBtn.src = 'assets/exit_full-screen_button.png';
+            FullScreenModeBtn.style.opacity = 0.5;
+            landscapeModeFullScreenModeBtn.style.opacity = 0.5;
+            FullScreenModeBtn.style.pointerEvents = 'none';
+            landscapeModeFullScreenModeBtn.style.pointerEvents = 'none';
+            FullScreenModeBtn.style.cursor = 'default';
+            landscapeModeFullScreenModeBtn.style.cursor = 'default';
+            FullScreenModeBtn.classList.remove('play-sound');
+            landscapeModeFullScreenModeBtn.classList.remove('play-sound');
+            
+        } else if (fullScreenModeActivated) {
+            fullScreenModeActivated = false;
+            buttonStates.fullScreenMode = false;
+            FullScreenModeBtn.src = 'assets/open_full-screen_button.png';
+            landscapeModeFullScreenModeBtn.src = 'assets/open_full-screen_button.png';
+            FullScreenModeBtn.style.opacity = 1;
+            landscapeModeFullScreenModeBtn.style.opacity = 1;
+            FullScreenModeBtn.style.pointerEvents = 'auto';
+            landscapeModeFullScreenModeBtn.style.pointerEvents = 'auto';
+            FullScreenModeBtn.style.cursor = 'pointer';
+            landscapeModeFullScreenModeBtn.style.cursor = 'pointer';
+            FullScreenModeBtn.classList.add('play-sound');
+            landscapeModeFullScreenModeBtn.classList.add('play-sound');
+        }
+    }
+    
+
+
     const banner = document.getElementById('loss_limit_reached_banner');
     const bannerButton = document.getElementById('close-banner-button');
 
@@ -996,23 +1114,6 @@ window.onload = () => {
 
     // Перевірка початкової орієнтації при завантаженні сторінки
     handleOrientationChange(landscapeQuery);
-    
-
-
-    // Функція для переходу в повноекранний режим
-    function openFullscreen() {
-        const elem = document.documentElement; // Вибираємо весь документ для повноекранного режиму
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) { // Safari
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { // IE11
-            elem.msRequestFullscreen();
-        }
-    }
-
-    // Додаємо обробник події до всього документа
-    document.addEventListener('click', openFullscreen);
 
 };
 
