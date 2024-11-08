@@ -56,6 +56,141 @@ for (let i = 1; i <= 7; i++) {
     paylineElements.push(payline);
 }
 
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const loadingText = document.getElementById('loading-text');
+    const percents_text = document.getElementById('percents');
+    const progressBarContainer = document.getElementById('progress-bar-container');
+    const playBtn = document.querySelector('.play-btn img');
+    
+    // Зміна тексту на завантажувальному екрані
+    const loadingMessages = [
+        "7 ВИГРАШНИХ ЛІНІЙ",
+        "ВИПАДКОВИЙ МНОЖНИК ДО 50Х",
+        "РІВНІ ШАНСИ НА ВИПАДАННЯ ВСІХ СИМВОЛІВ"
+    ];
+    let messageIndex = 0;
+
+    setInterval(() => {
+        messageIndex = (messageIndex + 1) % loadingMessages.length;
+
+        switch (messageIndex) {
+            case 0:
+                loadingText.style.left = '10vw';
+                break;
+            case 1:
+                loadingText.style.left = '-3vw';
+                break;
+            case 2:
+                loadingText.style.left = '-16vw';
+                break;
+        }
+
+        loadingText.innerText = loadingMessages[messageIndex];
+    }, 4000); // Зміна повідомлення кожні 2 секунди
+
+
+    const mediaFiles = document.querySelectorAll('img, video');
+    let i = 0
+
+    Array.from(mediaFiles).forEach((file) => {
+        file.onload = () => {
+            i++
+
+            let percentage_loaded = ((i * 100) / mediaFiles.length).toFixed(1)
+
+            console.log(percentage_loaded);
+
+            if (percentage_loaded <= 100) {
+                console.log(percents.innerHTML);
+                percents.innerHTML = percentage_loaded;
+                percents_text.textContent = `${percentage_loaded}%`;
+            }
+
+            // Отримуємо всі зображення з контейнера .progress-bar-container
+            const images = document.querySelectorAll('.progress-bar-container img');
+
+            // Загальна кількість зображень у контейнері
+            const totalImages = images.length;
+
+            // Обчислюємо кількість зображень, які мають змінити opacity
+            const numberOfImagesToChange = Math.floor((percentage_loaded / 100) * totalImages);
+
+            // Перебираємо всі зображення і змінюємо opacity
+            images.forEach((img, index) => {
+                if (index < numberOfImagesToChange) {
+                    img.style.opacity = 1; // Зображення буде повністю видимим
+                } else {
+                    img.style.opacity = 0.3; // Інші зображення будуть менш видимими
+                }
+            });
+
+            if(i === mediaFiles.length) {
+                percents.innerHTML = 100
+                percents_text.textContent = `${percentage_loaded}%`;
+
+                setTimeout(() => {
+                    percents_text.style.opacity = 0;
+                    progressBarContainer.style.opacity = 0;
+                    playBtn.style.opacity = 1;
+                }, 1000);
+            }
+        }
+    })
+
+})
+
+
+
+function handleOrientationChange(event) {
+    const slotContainer = document.querySelector('.slot-container');
+    const portraitMode = document.querySelector('.portrait-mode');
+    const preloader = document.querySelector('.preloader');
+
+    if (event.matches) {
+        // Ландшафтний режим
+
+        slotContainer.classList.remove('hidden');
+        portraitMode.classList.add('hidden');
+
+        preloader.style.opacity = 1;
+        slotContainer.style.opacity = 1;
+        portraitMode.style.opacity = 0;
+
+        console.log('Ландшафтний режим');
+
+    } else {
+        // Портретний режим
+
+        slotContainer.classList.add('hidden');
+        portraitMode.classList.remove('hidden');
+
+        slotContainer.style.opacity = 0;
+        portraitMode.style.opacity = 1;
+        preloader.style.opacity = 0;
+
+        console.log('Портретний режим');
+    }
+}
+
+
+
+function hidePreloader() {
+    const preloader = document.querySelector('.preloader');
+    preloader.classList.add('preloader--hide')
+}
+
+// Використовуємо matchMedia для відстеження змін орієнтації
+const landscapeQuery = window.matchMedia("(orientation: landscape)");
+landscapeQuery.addEventListener("change", handleOrientationChange);
+
+// Перевірка початкової орієнтації при завантаженні сторінки
+handleOrientationChange(landscapeQuery);
+
+
+
 // Функція оновлення відображення ставки
 function updateBetValue() {
     const betText = document.querySelector('.frame-subtext');
@@ -1077,43 +1212,6 @@ window.onload = () => {
         // Зберігаємо початкове зображення в атрибуті
         button.setAttribute('data-original-src', button.src);
     });
-
-
-
-    function handleOrientationChange(event) {
-        const slotContainer = document.querySelector('.slot-container');
-        const portraitMode = document.querySelector('.portrait-mode');
-
-        if (event.matches) {
-            // Ландшафтний режим
-
-            slotContainer.classList.remove('hidden');
-            portraitMode.classList.add('hidden');
-
-            slotContainer.style.opacity = 1;
-            portraitMode.style.opacity = 0;
-
-            console.log('Ландшафтний режим');
-
-        } else {
-            // Портретний режим
-
-            slotContainer.classList.add('hidden');
-            portraitMode.classList.remove('hidden');
-
-            slotContainer.style.opacity = 0;
-            portraitMode.style.opacity = 1;
-
-            console.log('Портретний режим');
-        }
-    }
-
-    // Використовуємо matchMedia для відстеження змін орієнтації
-    const landscapeQuery = window.matchMedia("(orientation: landscape)");
-    landscapeQuery.addEventListener("change", handleOrientationChange);
-
-    // Перевірка початкової орієнтації при завантаженні сторінки
-    handleOrientationChange(landscapeQuery);
 
 };
 

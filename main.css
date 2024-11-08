@@ -14,6 +14,7 @@
     --change-button-hover-scale: 1.15;
     --corner-button-hover-scale: 1.1;
     --close-btn-hover-image: url('assets/close_button_hover.png');
+    --play-btn-hover-image: url('assets/play_button_hover.png');
     --animation-duration: 0.3s;
     --animation-ease: ease-out;
     --pulse-color-primary: rgba(222, 11, 11, 1);
@@ -854,4 +855,77 @@ body {
     height: 100vh; /* Висота на весь екран */
     object-fit: fill; /* Зображення буде розтягнуте, щоб повністю заповнювати екран */
     z-index: -1; /* Розташовуємо зображення на задньому фоні */
+}
+
+
+
+.preloader img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* Ширина на весь екран */
+    height: 100vh; /* Висота на весь екран */
+    object-fit: fill; /* Зображення буде розтягнуте, щоб повністю заповнювати екран */
+    z-index: 1000;
+    transition: all .09s ease-out;
+}
+
+.preloader--hide {
+    opacity: 0;
+    visibility: hidden;
+    z-index: -1;
+}
+
+.preloader__loader, .preloader__percents, .loading-info {
+    position: absolute;
+    z-index: 1000;
+}
+
+.preloader__percents {
+    color: #eb6507;
+    font-family: "Rubik Vinyl", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3.75vw;
+    white-space: nowrap;
+    top: 35vh;
+    left: 62.5vw;
+}
+
+.loading-info {
+    color: #e80505;
+    font-family: "Rubik Vinyl", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3.75vw;
+    white-space: nowrap;
+    top: 21vh;
+    left: -16vw;
+}
+
+.play-btn img {
+    width: 30vh;
+    height: auto;
+    top: 84vh;
+    left: 42.5vw;
+    opacity: 0;
+}
+
+.play-btn img:hover {
+    content: var(--play-btn-hover-image);
+    transform: scale(var(--button-hover-scale));
+}
+
+.progress-bar-container {
+    display: flex;
+    gap: 1vw;
+}
+
+.progress-bar-container img {
+    position: relative;
+    width: 5vw;
+    height: auto;
+    top: 31vh;
+    left: 1vw;
+    opacity: 0.3;
 }

@@ -4,13 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gold Bonanza</title>
+
+    <!-- preload -->
+
+    <link rel="preload" href="assets\portrait-mode-bg.png" as="image">
+    <link rel="preload" href="assets\open_full-screen_button.png" as="image">
+    <link rel="preload" href="assets\rotate_your_phone.gif" as="image">
+
+    <link rel="preload" href="assets\preload_screen.png" as="image">
+    <link rel="preload" href="assets\ruby in frame.png" as="image">
+    <link rel="preload" href="assets\play_button.png" as="image">
+
+    <!-- preload -->
+
     <link rel="stylesheet" href="main.css">
     <script src="main.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Vinyl&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <div id="preloader" class="preloader">
+        <div class="preloader__loader">
+            <img src="assets\preload_screen.png" alt="Preload Screen" class="preload-screen">
+            <span id="loading-text" class="loading-info">РІВНІ ШАНСИ НА ВИПАДАННЯ ВСІХ СИМВОЛІВ</span>
+
+            <button class="play-btn play-sound">
+                <img src="assets\play_button.png" alt="Play" onclick="hidePreloader()">
+            </button>
+
+            <div class="progress-bar-container" id="progress-bar-container">
+                <img src="assets\ruby in frame.png" alt="Ruby 1">
+                <img src="assets\ruby in frame.png" alt="Ruby 2">
+                <img src="assets\ruby in frame.png" alt="Ruby 3">
+                <img src="assets\ruby in frame.png" alt="Ruby 4">
+                <img src="assets\ruby in frame.png" alt="Ruby 5">
+                <img src="assets\ruby in frame.png" alt="Ruby 6">
+                <img src="assets\ruby in frame.png" alt="Ruby 7">
+                <img src="assets\ruby in frame.png" alt="Ruby 8">
+                <img src="assets\ruby in frame.png" alt="Ruby 9">
+                <img src="assets\ruby in frame.png" alt="Ruby 10">
+            </div>
+
+            <span class="preloader__percents">
+                <span id="percents">0%</span>
+            </span>
+        </div>
+        <!-- /.preloader__loader -->
+    </div>
+    <!-- /#preloader.preloader -->
+
     <div class="slot-container">
         <div class="corner-buttons">
             <!-- Додаємо відповідні класи для кнопок -->
