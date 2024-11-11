@@ -58,40 +58,47 @@ for (let i = 1; i <= 7; i++) {
 
 
 
-function retryLoad(file, retries = 3) {
-    console.log('retryLoad');
-    return new Promise((resolve, reject) => {
-        function attemptLoad(attempt) {
-            if (file.complete) {
-                resolve();
-            } else {
-                file.addEventListener('load', resolve);
-                file.addEventListener('error', () => {
-                    if (attempt <= retries) {
-                        console.log(`Повторна спроба завантаження... (${attempt})`);
-                        attemptLoad(attempt + 1);
-                    } else {
-                        reject(`Не вдалося завантажити файл: ${file.src}`);
-                    }
-                });
-            }
-        }
-        attemptLoad(1);
-    });
-}
+// function retryLoad(file, retries = 5) {
+//     const src = file.getAttribute('src');
 
-function loadAllMediaWithRetries() {
-    const mediaFiles = document.querySelectorAll('img, video');
-    console.log(mediaFiles.length);
-    const loadPromises = [];
+//     return new Promise((resolve, reject) => {
+//         function attemptLoad(attempt) {
+//             const newImg = new Image();
+//             newImg.src = src;
+            
+//             if (newImg.complete) {
+//                 resolve();
+//                 fileLoaded();
+//             }
 
-    mediaFiles.forEach(file => {
-        loadPromises.push(retryLoad(file));
-    });
+//             if (attempt <= retries) {
+//                 console.log(`Повторна спроба завантаження... (${attempt})`);
+//                 attemptLoad(attempt + 1);
+//             } else {
+//                 reject(`Не вдалося завантажити файл: ${file.src}`);
+//             }
+//         }
+//         attemptLoad(1);
+//     });
+// }
 
-    return Promise.all(loadPromises);
-}
+// function loadAllMediaWithRetries() {
+//     const mediaFiles = document.querySelectorAll('img, video');
+//     console.log(mediaFiles.length);
+//     const loadPromises = [];
 
+//     mediaFiles.forEach(file => {
+//         loadPromises.push(retryLoad(file));
+//     });
+
+//     return Promise.all(loadPromises);
+// }
+
+
+const mediaFiles = document.querySelectorAll('img, video');
+let numberOfLoadedImages = 0;
+
+let intervalChangingText;
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -107,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     let messageIndex = 0;
 
-    setInterval(() => {
+    intervalChangingText = setInterval(() => {
         messageIndex = (messageIndex + 1) % loadingMessages.length;
 
         switch (messageIndex) {
@@ -126,9 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4000); // Зміна повідомлення кожні 2 секунди
 
 
-
-
-
     // Важливі зображення для портретного режиму, прелоадеру та інші зображення
     const portraitImages = document.querySelectorAll('.portrait-important');
     const preloaderImages = document.querySelectorAll('.preloader-important');
@@ -137,24 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Функція для завантаження масиву зображень
     function loadImagesSequentially(images) {
-        console.log(images);
-
         const loadPromises = [];
-
-        console.log(loadPromises);
 
         images.forEach((img) => {
             loadPromises.push(new Promise((resolve, reject) => {
                 const dataSrc = img.getAttribute('data-src');
                 const src = img.getAttribute('src');
 
-                // console.log(src);
-                // console.log(dataSrc);
-                // console.log(img);
-
                 if (dataSrc) {
-                    console.log('there is data src');
-
                     img.src = dataSrc;  // Тепер браузер почне завантажувати зображення
                     img.removeAttribute('data-src'); // Можна видалити `data-src` після встановлення `src`
 
@@ -165,14 +159,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (newImg.complete) {
                         resolve();
                         fileLoaded();
-                        console.log('Зображення вже завантажено.');
+                        console.log(`Зображення ${img.src} вже завантажено!`);
                     }
                 }
 
                 img.onload = () => {
                     resolve();
                     fileLoaded();
-                    console.log(`${img.src} loaded!`)
+                    console.log(`${img.src} завантажено!`)
                 }
             }));
         });
@@ -188,29 +182,31 @@ document.addEventListener('DOMContentLoaded', () => {
             // Спочатку завантажуємо зображення для прелоадеру, потім для портретного режиму
             loadImagesSequentially(preloaderImages)
                 .then(() => {
-                    console.log('Зображення для прелоадеру завантажені');
+                    console.log('Зображення для прелоадеру завантажені!');
                     return loadImagesSequentially(portraitImages);
                 })
                 .then(() => {
-                    console.log('Зображення для портретного режиму завантажені');
+                    console.log('Зображення для портретного режиму завантажені!');
                     return loadImagesSequentially(lazyImages);
                 })
                 .then(() => {
-                    console.log('Усі зображення завантажені');
+                    numberOfLoadedImages = mediaFiles.length;
+                    console.log('Усі зображення завантажені!');
                 });
         } else {
             // Спочатку завантажуємо зображення для портретного режиму, потім для прелоадеру
             loadImagesSequentially(portraitImages)
                 .then(() => {
-                    console.log('Зображення для портретного режиму завантажені');
+                    console.log('Зображення для портретного режиму завантажені!');
                     return loadImagesSequentially(preloaderImages);
                 })
                 .then(() => {
-                    console.log('Зображення для прелоадеру завантажені');
+                    console.log('Зображення для прелоадеру завантажені!');
                     return loadImagesSequentially(lazyImages);
                 })
                 .then(() => {
-                    console.log('Усі зображення завантажені');
+                    numberOfLoadedImages = mediaFiles.length;
+                    console.log('Усі зображення завантажені!');
                 });
         }
     }
@@ -220,17 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-
-
-    const mediaFiles = document.querySelectorAll('img, video');
-    let i = 0
-
     function fileLoaded() {
-        i++
-        console.log(i);
+        numberOfLoadedImages++
+        console.log(`Amount of loaded images: ${numberOfLoadedImages}`);
 
-        let percentage_loaded = ((i * 100) / mediaFiles.length).toFixed(1)
-        console.log(percentage_loaded);
+        let percentage_loaded = ((numberOfLoadedImages * 100) / mediaFiles.length).toFixed(1)
+        console.log(`Loaded: ${percentage_loaded}%`);
 
         if (percentage_loaded <= 100) {
             percents_text.textContent = `${percentage_loaded}%`;
@@ -248,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        if(i === mediaFiles.length) {
+        if(numberOfLoadedImages === mediaFiles.length) {
             percents_text.textContent = `${percentage_loaded}%`;
         }
     }
@@ -352,11 +343,6 @@ const roll = (reel, offset = 0) => {
           backgroundPositionYinVH = Math.floor((backgroundPositionY / window.innerHeight) * 100 * 100) / 100,
           targetBackgroundPositionY = backgroundPositionYinVH + delta * icon_height,
           normTargetBackgroundPositionY = targetBackgroundPositionY % (num_icons * icon_height);
-
-
-    console.log(`backgroundPositionY ${backgroundPositionY} px`);
-    console.log(`backgroundPositionY ${(backgroundPositionY / window.innerHeight) * 100} vh`);
-    console.log(`backgroundPositionYinVH ${backgroundPositionYinVH} vh`);
     
 
     return new Promise((resolve) => {
@@ -369,8 +355,6 @@ const roll = (reel, offset = 0) => {
             const symbol_index = (indexes[offset] + delta) % num_icons;
 
             if (iconMap[symbol_index] === 'seven') {
-                console.log('Setting backgroundPositionY = 0');
-        
                 reel.style.backgroundPositionY = `0px`;
 
             } else {
@@ -601,7 +585,6 @@ function hideWinBanner() {
         leverButton.style.cursor = 'default'; // Міняємо курсор на звичайний (не клікабельний)
 
         const autoButton = document.querySelector('.button-icon.auto');
-        console.log(buttonStates['auto']);
         setButtonImage(autoButton);
 
         autoGame(true);
@@ -723,8 +706,6 @@ function showWinBanner(type, amount) {
             setTimeout(addHideEventListener, 1000); // Додаємо обробник приховування після завершення фінальної анімації
         }
 
-        console.log(`autoSettings['autoStopped'] ${autoSettings['autoStopped']}`);
-        console.log(`buttonStates['auto'] ${buttonStates['auto']}`);
 
         if (autoSettings['autoStopped']) {
             const autoButton = document.querySelector('.button-icon.auto');
@@ -818,18 +799,19 @@ function setButtonImage(button) {
             hover: 'assets-for-gold-bonanza-compressed/info_button_hover.png'
         },
         landscapeModeFullScreenModeBtn: {
-            on: 'assets-for-gold-bonanza-compressed\exit_full-screen_button.png',
-            default: 'assets-for-gold-bonanza-compressed\open_full-screen_button.png',
+            on: 'assets-for-gold-bonanza-compressed/exit_full-screen_button.png',
+            default: 'assets-for-gold-bonanza-compressed/open_full-screen_button.png',
         },
         FullScreenModeBtn: {
-            on: 'assets-for-gold-bonanza-compressed\exit_full-screen_button.png',
-            default: 'assets-for-gold-bonanza-compressed\open_full-screen_button.png',
+            on: 'assets-for-gold-bonanza-compressed/exit_full-screen_button.png',
+            default: 'assets-for-gold-bonanza-compressed/open_full-screen_button.png',
         },
         preloaderFullScreenModeBtn: {
-            on: 'assets-for-gold-bonanza-compressed\exit_full-screen_button.png',
-            default: 'assets-for-gold-bonanza-compressed\open_full-screen_button.png',
+            on: 'assets-for-gold-bonanza-compressed/exit_full-screen_button.png',
+            default: 'assets-for-gold-bonanza-compressed/open_full-screen_button.png',
         },
     };
+
 
     if (button.classList.contains('auto')) {
         button.src = buttonStates.auto ? images.auto.on : images.auto.default;
@@ -841,12 +823,14 @@ function setButtonImage(button) {
         button.src = buttonStates.volume ? images.volume.on : images.volume.off;
     } else if (button.classList.contains('info')) {
         button.src = images.info.default;
-    } else if (button.classList.contains('landscapeModeFullScreenModeBtn')) {
-        button.src = buttonStates.fullScreenMode ? images.landscapeModeFullScreenModeBtn.on : images.landscapeModeFullScreenModeBtn.default;
-    } else if (button.classList.contains('FullScreenModeBtn')) {
-        button.src = buttonStates.fullScreenMode ? images.FullScreenModeBtn.on : images.FullScreenModeBtn.default;
-    } else if (button.classList.contains('preloaderFullScreenModeBtn')) {
-        button.src = buttonStates.fullScreenMode ? images.preloaderFullScreenModeBtn.on : images.preloaderFullScreenModeBtn.default;
+    } else if (button.classList.contains('preloader-full-screen-mode-btn-img') || button.classList.contains('landscape-mode-full-screen-mode-btn-img') || button.classList.contains('full-screen-mode-btn-img')) {
+        const landscapeModeFullScreenModeBtn = document.querySelector('.landscape-mode-full-screen-mode-btn img');
+        const FullScreenModeBtn = document.querySelector('.full-screen-mode-btn img');
+        const preloaderFullScreenModeBtn = document.querySelector('.preloader-full-screen-mode-btn img');
+
+        landscapeModeFullScreenModeBtn.src = buttonStates.fullScreenMode ? images.landscapeModeFullScreenModeBtn.on : images.landscapeModeFullScreenModeBtn.default;
+        FullScreenModeBtn.src = buttonStates.fullScreenMode ? images.FullScreenModeBtn.on : images.FullScreenModeBtn.default;
+        preloaderFullScreenModeBtn.src = buttonStates.fullScreenMode ? images.preloaderFullScreenModeBtn.on : images.preloaderFullScreenModeBtn.default;
     }
 }
 
@@ -1001,13 +985,18 @@ switchButton.setAttribute('data-original-src', switchButton.src);
 
 
 window.onload = () => {
-    console.log('Page loaded!');
+    console.log('Сторінка завантажена!');
 
     const percents_text = document.getElementById('percents');
     const progressBarContainer = document.getElementById('progress-bar-container');
     const playBtn = document.querySelector('.play-btn img');
 
-    loadAllMediaWithRetries().then(() => {
+    console.log(`Потрібно завантажити зображень: ${mediaFiles.length}`);
+    console.log(`Кількість завантажених зображень: ${numberOfLoadedImages}`);
+
+    if (mediaFiles.length === numberOfLoadedImages) {
+        console.log(`Завантажена потрібна кількість зображень! (${numberOfLoadedImages}/${mediaFiles.length})`);
+
         document.body.style.backgroundImage = "url('assets-for-gold-bonanza-compressed/gold-bonanza-background.jpg')";
 
         const reels = document.querySelectorAll('.reel');
@@ -1031,11 +1020,16 @@ window.onload = () => {
             playBtn.style.opacity = 1;
         }, 2000);
 
-        console.log("Усі файли завантажені");
-        // Код після повного завантаження
-    }).catch(error => {
-        console.error(error);
-    });
+    } else {
+        clearInterval(intervalChangingText);
+        const loadingText = document.getElementById('loading-text');
+        loadingText.style.left = '-16vw';
+        loadingText.innerText = "ВИНИКЛИ ПРОБЛЕМИ З ІНТЕРНЕТ З'ЄДНАННЯМ";
+
+        console.log(`Потрібна кількість зображень не була завантажена! (${numberOfLoadedImages}/${mediaFiles.length})`);
+        console.log("!!!У КОРИСТУВАЧА ВИНИКЛИ ПРОБЛЕМИ З ІНТЕРНЕТ З'ЄДНАННЯМ!!!");
+    }
+    
 
     // Оновлення відображення ставки при завантаженні сторінки
     updateBetValue();
@@ -1055,7 +1049,6 @@ window.onload = () => {
     });
 
     playButton.onclick = () => {
-        console.log('playButton clicked!');
         hidePreloader();
     };
 
