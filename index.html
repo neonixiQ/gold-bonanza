@@ -14,25 +14,28 @@
 <body>
 
     <div id="preloader" class="preloader">
+        <button class="preloader-full-screen-mode-btn">
+            <img src="assets-for-gold-bonanza-compressed\open_full-screen_button.png" alt="Full Screen" class="preloader-important play-sound">
+        </button>
         <div class="preloader__loader">
-            <img src="assets\preload_screen.png" alt="Preload Screen" class="preload-screen">
+            <img src="assets-for-gold-bonanza-compressed\preload_screen.png" alt="Preload Screen" class="preload-screen preloader-important">
             <span id="loading-text" class="loading-info">РІВНІ ШАНСИ НА ВИПАДАННЯ ВСІХ СИМВОЛІВ</span>
 
             <button class="play-btn play-sound">
-                <img src="assets\play_button.png" alt="Play" onclick="hidePreloader()">
+                <img data-src="assets-for-gold-bonanza-compressed\play_button.png" alt="Play" class="lazy-load">
             </button>
 
             <div class="progress-bar-container" id="progress-bar-container">
-                <img src="assets\ruby in frame.png" alt="Ruby 1">
-                <img src="assets\ruby in frame.png" alt="Ruby 2">
-                <img src="assets\ruby in frame.png" alt="Ruby 3">
-                <img src="assets\ruby in frame.png" alt="Ruby 4">
-                <img src="assets\ruby in frame.png" alt="Ruby 5">
-                <img src="assets\ruby in frame.png" alt="Ruby 6">
-                <img src="assets\ruby in frame.png" alt="Ruby 7">
-                <img src="assets\ruby in frame.png" alt="Ruby 8">
-                <img src="assets\ruby in frame.png" alt="Ruby 9">
-                <img src="assets\ruby in frame.png" alt="Ruby 10">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 1" class="preloader-important">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 2">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 3">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 4">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 5">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 6">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 7">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 8">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 9">
+                <img src="assets-for-gold-bonanza-compressed\ruby in frame.png" alt="Ruby 10">
             </div>
 
             <span class="preloader__percents">
@@ -47,47 +50,47 @@
         <div class="corner-buttons">
             <!-- Додаємо відповідні класи для кнопок -->
             <button class="corner-button info-button play-sound">
-                <img src="assets/info_button.png" alt="Info" class="button-icon info">
+                <img data-src="assets-for-gold-bonanza-compressed/info_button.png" alt="Info" class="button-icon info lazy-load">
             </button>
             <button class="corner-button play-sound" onclick="toggleMute()">
-                <img src="assets/volume_button.png" alt="Volume" class="button-icon volume">
+                <img data-src="assets-for-gold-bonanza-compressed/volume_button.png" alt="Volume" class="button-icon volume lazy-load">
             </button>
         </div>
         
         <button class="landscape-mode-full-screen-mode-btn">
-            <img src="assets\open_full-screen_button.png" alt="Full Screen" class="play-sound">
+            <img data-src="assets-for-gold-bonanza-compressed\open_full-screen_button.png" alt="Full Screen" class="play-sound lazy-load">
         </button>
 
         <div class="text-frames">
             <div class="frame-container">
-                <img src="assets/frame.png" alt="Frame 1" class="frame frame-medium">
+                <img data-src="assets-for-gold-bonanza-compressed/frame.png" alt="Frame 1" class="frame frame-medium lazy-load">
                 <p class="frame-text">СТАВОЧКА</p>
                 <p class="frame-subtext bet">1 ФАНТІКІВ</p>
 
                 <button class="change-button minus play-sound" onclick="decreaseBet()" disabled>
-                    <img src="assets/minus_button.png" alt="-">
+                    <img data-src="assets-for-gold-bonanza-compressed/minus_button.png" alt="-" class="lazy-load">
                 </button>
                 <button class="change-button plus play-sound" onclick="increaseBet()">
-                    <img src="assets/plus_button.png" alt="+">
+                    <img data-src="assets-for-gold-bonanza-compressed/plus_button.png" alt="+" class="lazy-load">
                 </button>                
             </div>
             <div class="frame-container">
-                <img src="assets/frame.png" alt="Frame 2" class="frame frame-large">
+                <img data-src="assets-for-gold-bonanza-compressed/frame.png" alt="Frame 2" class="frame frame-large lazy-load">
                 <p class="frame-text large">ВИГРАШ</p>
                 <p class="frame-subtext large">УДАЧІ!</p>
             </div>
             <div class="frame-container">
-                <img src="assets/frame.png" alt="Frame 3" class="frame frame-medium">
+                <img data-src="assets-for-gold-bonanza-compressed/frame.png" alt="Frame 3" class="frame frame-medium lazy-load">
                 <p class="frame-text">БАЛІК</p>
                 <p class="frame-subtext balance">1000 ФАНТІКІВ</p>
             </div>
             <div class="frame-container">
-                <img src="assets/frame.png" alt="Frame 4" class="frame frame-small">
+                <img data-src="assets-for-gold-bonanza-compressed/frame.png" alt="Frame 4" class="frame frame-small lazy-load">
                 <p class="frame-text small">7 ВИГРАШНИХ ЛІНІЙ</p>
             </div>
         </div>            
         <div class="logo">
-            <img src="assets/logo.png" alt="Logo">
+            <img data-src="assets-for-gold-bonanza-compressed/logo.png" alt="Logo" class="lazy-load">
         </div>
 
         <div id="win-banner" class="hidden">
@@ -99,8 +102,8 @@
 
         <div id="loss_limit_reached_banner">
             <div class="banner-content">
-                <img src="assets\loss_limit_reached_banner.png" alt="Loss Limit Reached Banner" id="banner-image">
-                <img src="assets\ok_button.png" alt="Close Button" id="close-banner-button" class="banner-button play-sound" onclick="playSound()">
+                <img data-src="assets-for-gold-bonanza-compressed\loss_limit_reached_banner.png" alt="Loss Limit Reached Banner" id="banner-image" class="lazy-load">
+                <img data-src="assets-for-gold-bonanza-compressed\ok_button.png" alt="Close Button" id="close-banner-button" class="banner-button play-sound lazy-load" onclick="playSound()">
             </div>
         </div>               
 
@@ -113,29 +116,29 @@
 
             <div class="advanced-auto-settings-container">
                 <div class="advanced-auto-settings-panel hidden" id="advanced-auto-settings-panel">
-                    <img src="assets/advanced_auto_settings.png" alt="Advanced Auto Settings Panel" class="advanced_auto_settings">
+                    <img data-src="assets-for-gold-bonanza-compressed/advanced_auto_settings.png" alt="Advanced Auto Settings Panel" class="advanced_auto_settings lazy-load">
                     <div class="settings-buttons">
                         <div class="number-of-rounds">
-                            <img id="25-button" src="assets\25_button.png" alt="25" class="setting-button play-sound" data-selected-src="assets\25_button_on.png" onclick="playSound()">
-                            <img id="50-button" src="assets\50_button.png" alt="50" class="setting-button" data-selected-src="assets\50_button_on.png" onclick="playSound()">
-                            <img id="75-button" src="assets\75_button.png" alt="75" class="setting-button" data-selected-src="assets\75_button_on.png" onclick="playSound()">
-                            <img id="100-button" src="assets\100_button.png" alt="100" class="setting-button" data-selected-src="assets\100_button_on.png" onclick="playSound()">
-                            <img id="250-button" src="assets\250_button.png" alt="250" class="setting-button" data-selected-src="assets\250_button_on.png" onclick="playSound()">
-                            <img id="500-button" src="assets\500_button.png" alt="500" class="setting-button" data-selected-src="assets\500_button_on.png" onclick="playSound()">
-                            <img id="1000-button" src="assets\1000_button.png" alt="1000" class="setting-button" data-selected-src="assets\1000_button_on.png" onclick="playSound()">
-                            <img id="endless-number-of-rounds-button" src="assets\∞_rounds_button.png" alt="∞" class="setting-button" data-selected-src="assets\∞_rounds_button_on.png" onclick="playSound()">
+                            <img id="25-button" data-src="assets-for-gold-bonanza-compressed\25_button.png" alt="25" class="setting-button play-sound lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\25_button_on.png" onclick="playSound()">
+                            <img id="50-button" data-src="assets-for-gold-bonanza-compressed\50_button.png" alt="50" class="setting-button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\50_button_on.png" onclick="playSound()">
+                            <img id="75-button" data-src="assets-for-gold-bonanza-compressed\75_button.png" alt="75" class="setting-button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\75_button_on.png" onclick="playSound()">
+                            <img id="100-button" data-src="assets-for-gold-bonanza-compressed\100_button.png" alt="100" class="setting-button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\100_button_on.png" onclick="playSound()">
+                            <img id="250-button" data-src="assets-for-gold-bonanza-compressed\250_button.png" alt="250" class="setting-button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\250_button_on.png" onclick="playSound()">
+                            <img id="500-button" data-src="assets-for-gold-bonanza-compressed\500_button.png" alt="500" class="setting-button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\500_button_on.png" onclick="playSound()">
+                            <img id="1000-button" data-src="assets-for-gold-bonanza-compressed\1000_button.png" alt="1000" class="setting-button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\1000_button_on.png" onclick="playSound()">
+                            <img id="endless-number-of-rounds-button" data-src="assets-for-gold-bonanza-compressed\∞_rounds_button.png" alt="∞" class="setting-button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\∞_rounds_button_on.png" onclick="playSound()">
                         </div>
 
                         <div class="switch-button">
-                            <img id="switch-button" src="assets\switch_button.png" alt="switch" class="setting-button" data-selected-src="assets\switch_button_on.png" onclick="playSound()">
+                            <img id="switch-button" data-src="assets-for-gold-bonanza-compressed\switch_button.png" alt="switch" class="setting-button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\switch_button_on.png" onclick="playSound()">
                         </div>
 
                         <div class="lose-limit">
-                            <img id="5X-button" src="assets\5X_button.png" alt="5X" class="setting-button button-5x" data-selected-src="assets\5X_button_on.png" onclick="playSound()">
-                            <img id="20X-button" src="assets\20X_button.png" alt="20X" class="setting-button button-20x" data-selected-src="assets\20X_button_on.png" onclick="playSound()">
-                            <img id="50X-button" src="assets\50X_button.png" alt="50X" class="setting-button button-50x" data-selected-src="assets\50X_button_on.png" onclick="playSound()">
-                            <img id="endless-lose-limit-button" src="assets\∞_lose_limit_button.png" alt="∞" class="setting-button lose_limit_endless_button" data-selected-src="assets\∞_lose_limit_button_on.png" onclick="playSound()">
-                            <img id="individual-settings-lose-limit-button" src="assets\individual_settings_lose_limit_button.png" alt="individual settings" class="individual_settings_lose_limit_button" data-selected-src="assets\individual_settings_lose_limit_button_on.png">
+                            <img id="5X-button" data-src="assets-for-gold-bonanza-compressed\5X_button.png" alt="5X" class="setting-button button-5x lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\5X_button_on.png" onclick="playSound()">
+                            <img id="20X-button" data-src="assets-for-gold-bonanza-compressed\20X_button.png" alt="20X" class="setting-button button-20x lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\20X_button_on.png" onclick="playSound()">
+                            <img id="50X-button" data-src="assets-for-gold-bonanza-compressed\50X_button.png" alt="50X" class="setting-button button-50x lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\50X_button_on.png" onclick="playSound()">
+                            <img id="endless-lose-limit-button" data-src="assets-for-gold-bonanza-compressed\∞_lose_limit_button.png" alt="∞" class="setting-button lose_limit_endless_button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\∞_lose_limit_button_on.png" onclick="playSound()">
+                            <img id="individual-settings-lose-limit-button" data-src="assets-for-gold-bonanza-compressed\individual_settings_lose_limit_button.png" alt="individual settings" class="individual_settings_lose_limit_button lazy-load" data-selected-src="assets-for-gold-bonanza-compressed\individual_settings_lose_limit_button_on.png">
                             <div class="individual-settings-container" onclick="playSound()">
                                 <input type="text" id="individual-input" class="hidden" placeholder="0.00">
                             </div>
@@ -145,7 +148,7 @@
             </div>                         
 
             <div class="lever-button">
-                <img src="assets\bent_lever_for_advanced_auto.png" alt="Lever for Advanced Auto" class="lever play-sound" 
+                <img data-src="assets-for-gold-bonanza-compressed\bent_lever_for_advanced_auto.png" alt="Lever for Advanced Auto" class="lever play-sound lazy-load" 
                 onclick="changeImage(this, 'lever'); playSound(); pullLever(this)">
             </div>
 
@@ -154,56 +157,56 @@
             </div>
 
             <div class="buttons">
-                <img src="assets/auto_spin_button.png" alt="Auto Spin" class="button-icon auto play-sound" 
+                <img data-src="assets-for-gold-bonanza-compressed/auto_spin_button.png" alt="Auto Spin" class="button-icon auto play-sound lazy-load" 
                      onclick="changeImage(this, 'auto'); playSound()">
                 
-                <img src="assets/spin_button.png" alt="Spin" class="button-icon spin play-sound" 
+                <img data-src="assets-for-gold-bonanza-compressed/spin_button.png" alt="Spin" class="button-icon spin play-sound lazy-load" 
                      onclick="changeImage(this, 'spin'); playSound()">
                 
-                <img src="assets/turbo_1_button.png" alt="Turbo" class="button-icon turbo play-sound" 
+                <img data-src="assets-for-gold-bonanza-compressed/turbo_1_button.png" alt="Turbo" class="button-icon turbo play-sound lazy-load" 
                      onclick="changeImage(this, 'turbo'); playSound()">
             </div>                            
         </div>
 
         <!-- Таблиця виплат та лінії, спочатку приховані -->
         <div class="paytable_and_paylines hidden">
-            <img src="assets/paytable_and_paylines.png" alt="Paytable and paylines" class="paytable-img">
+            <img data-src="assets-for-gold-bonanza-compressed/paytable_and_paylines.png" alt="Paytable and paylines" class="paytable-img lazy-load">
             <div class="close-btn-container">
                 <button class="close-btn play-sound">
-                    <img src="assets/close_button.png" alt="Close">
+                    <img data-src="assets-for-gold-bonanza-compressed/close_button.png" alt="Close" class="lazy-load">
                 </button>
             </div>
         </div>
 
         <!-- Paylines -->
         <div class="paylines">
-            <img src="assets\payline_1.png" alt="Payline 1" class="payline_1">
-            <img src="assets\payline_2.png" alt="Payline 2" class="payline_2">
-            <img src="assets\payline_3.png" alt="Payline 3" class="payline_3">
-            <img src="assets\payline_4.png" alt="Payline 4" class="payline_4">
-            <img src="assets\payline_5.png" alt="Payline 5" class="payline_5">
-            <img src="assets\payline_6.png" alt="Payline 6" class="payline_6">
-            <img src="assets\payline_7.png" alt="Payline 7" class="payline_7">
+            <img data-src="assets-for-gold-bonanza-compressed\payline_1.png" alt="Payline 1" class="payline_1 lazy-load">
+            <img data-src="assets-for-gold-bonanza-compressed\payline_2.png" alt="Payline 2" class="payline_2 lazy-load">
+            <img data-src="assets-for-gold-bonanza-compressed\payline_3.png" alt="Payline 3" class="payline_3 lazy-load">
+            <img data-src="assets-for-gold-bonanza-compressed\payline_4.png" alt="Payline 4" class="payline_4 lazy-load">
+            <img data-src="assets-for-gold-bonanza-compressed\payline_5.png" alt="Payline 5" class="payline_5 lazy-load">
+            <img data-src="assets-for-gold-bonanza-compressed\payline_6.png" alt="Payline 6" class="payline_6 lazy-load">
+            <img data-src="assets-for-gold-bonanza-compressed\payline_7.png" alt="Payline 7" class="payline_7 lazy-load">
         </div>
     </div>
 
     <div class="portrait-mode">
+        <img src="assets-for-gold-bonanza-compressed\portrait-mode-bg.png" alt="Background Image" class="background-image portrait-important">
         <div id="fade-overlay" class="fade-overlay"></div>
-        <img src="assets\rotate_your_phone.gif" alt="Rotate Your Phone" class="rotate-your-phone-gif">
+        <img src="assets-for-gold-bonanza-compressed\rotate_your_phone.gif" alt="Rotate Your Phone" class="rotate-your-phone-gif portrait-important">
         <button class="full-screen-mode-btn">
-            <img src="assets\open_full-screen_button.png" alt="Full Screen" class="play-sound">
+            <img src="assets-for-gold-bonanza-compressed\open_full-screen_button.png" alt="Full Screen" class="portrait-important play-sound">
         </button>
-        <img src="assets\portrait-mode-bg.png" alt="Background Image" class="background-image">
     </div>
 
-    <audio id="button-sound" src="assets\button_click.mp3"></audio>
-    <audio id="reels-spinning-sound" src="assets\reels_spinning.mp3"></audio>
-    <audio id="reel-stops-sound" src="assets\reel_stops.mp3"></audio>
-    <audio id="win-sound" src="assets\win.mp3"></audio>
+    <audio id="button-sound" src="assets-for-gold-bonanza-compressed\button_click.mp3"></audio>
+    <audio id="reels-spinning-sound" src="assets-for-gold-bonanza-compressed\reels_spinning.mp3"></audio>
+    <audio id="reel-stops-sound" src="assets-for-gold-bonanza-compressed\reel_stops.mp3"></audio>
+    <audio id="win-sound" src="assets-for-gold-bonanza-compressed\win.mp3"></audio>
 
-    <audio id="accrual-of-winnings-sound" src="assets\accrual_of_winnings_sound_long.mp3"></audio>
-    <audio id="opening-sound" src="assets\opening_sound.mp3"></audio>
-    <audio id="payout-sound" src="assets\payout_sound.mp3"></audio>
-    <audio id="payout-sound-without-applause" src="assets\payout_sound without applause.mp3"></audio>
+    <audio id="accrual-of-winnings-sound" src="assets-for-gold-bonanza-compressed\accrual_of_winnings_sound_long.mp3"></audio>
+    <audio id="opening-sound" src="assets-for-gold-bonanza-compressed\opening_sound.mp3"></audio>
+    <audio id="payout-sound" src="assets-for-gold-bonanza-compressed\payout_sound.mp3"></audio>
+    <audio id="payout-sound-without-applause" src="assets-for-gold-bonanza-compressed\payout_sound without applause.mp3"></audio>
 </body>
 </html>

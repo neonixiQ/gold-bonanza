@@ -58,12 +58,46 @@ for (let i = 1; i <= 7; i++) {
 
 
 
+function retryLoad(file, retries = 3) {
+    console.log('retryLoad');
+    return new Promise((resolve, reject) => {
+        function attemptLoad(attempt) {
+            if (file.complete) {
+                resolve();
+            } else {
+                file.addEventListener('load', resolve);
+                file.addEventListener('error', () => {
+                    if (attempt <= retries) {
+                        console.log(`Повторна спроба завантаження... (${attempt})`);
+                        attemptLoad(attempt + 1);
+                    } else {
+                        reject(`Не вдалося завантажити файл: ${file.src}`);
+                    }
+                });
+            }
+        }
+        attemptLoad(1);
+    });
+}
+
+function loadAllMediaWithRetries() {
+    const mediaFiles = document.querySelectorAll('img, video');
+    console.log(mediaFiles.length);
+    const loadPromises = [];
+
+    mediaFiles.forEach(file => {
+        loadPromises.push(retryLoad(file));
+    });
+
+    return Promise.all(loadPromises);
+}
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const loadingText = document.getElementById('loading-text');
     const percents_text = document.getElementById('percents');
-    const progressBarContainer = document.getElementById('progress-bar-container');
-    const playBtn = document.querySelector('.play-btn img');
     
     // Зміна тексту на завантажувальному екрані
     const loadingMessages = [
@@ -92,53 +126,132 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4000); // Зміна повідомлення кожні 2 секунди
 
 
+
+
+
+    // Важливі зображення для портретного режиму, прелоадеру та інші зображення
+    const portraitImages = document.querySelectorAll('.portrait-important');
+    const preloaderImages = document.querySelectorAll('.preloader-important');
+    const lazyImages = document.querySelectorAll('.lazy-load');
+
+
+    // Функція для завантаження масиву зображень
+    function loadImagesSequentially(images) {
+        console.log(images);
+
+        const loadPromises = [];
+
+        console.log(loadPromises);
+
+        images.forEach((img) => {
+            loadPromises.push(new Promise((resolve, reject) => {
+                const dataSrc = img.getAttribute('data-src');
+                const src = img.getAttribute('src');
+
+                // console.log(src);
+                // console.log(dataSrc);
+                // console.log(img);
+
+                if (dataSrc) {
+                    console.log('there is data src');
+
+                    img.src = dataSrc;  // Тепер браузер почне завантажувати зображення
+                    img.removeAttribute('data-src'); // Можна видалити `data-src` після встановлення `src`
+
+                } else if (src) {
+                    const newImg = new Image();
+                    newImg.src = src;
+
+                    if (newImg.complete) {
+                        resolve();
+                        fileLoaded();
+                        console.log('Зображення вже завантажено.');
+                    }
+                }
+
+                img.onload = () => {
+                    resolve();
+                    fileLoaded();
+                    console.log(`${img.src} loaded!`)
+                }
+            }));
+        });
+
+        return Promise.all(loadPromises);
+    }
+
+    // Функція для завантаження зображень у відповідному порядку
+    function loadImagesBasedOnOrientation() {
+        const landscapeQuery = window.matchMedia("(orientation: landscape)");
+
+        if (landscapeQuery.matches) {
+            // Спочатку завантажуємо зображення для прелоадеру, потім для портретного режиму
+            loadImagesSequentially(preloaderImages)
+                .then(() => {
+                    console.log('Зображення для прелоадеру завантажені');
+                    return loadImagesSequentially(portraitImages);
+                })
+                .then(() => {
+                    console.log('Зображення для портретного режиму завантажені');
+                    return loadImagesSequentially(lazyImages);
+                })
+                .then(() => {
+                    console.log('Усі зображення завантажені');
+                });
+        } else {
+            // Спочатку завантажуємо зображення для портретного режиму, потім для прелоадеру
+            loadImagesSequentially(portraitImages)
+                .then(() => {
+                    console.log('Зображення для портретного режиму завантажені');
+                    return loadImagesSequentially(preloaderImages);
+                })
+                .then(() => {
+                    console.log('Зображення для прелоадеру завантажені');
+                    return loadImagesSequentially(lazyImages);
+                })
+                .then(() => {
+                    console.log('Усі зображення завантажені');
+                });
+        }
+    }
+
+    // Викликаємо функцію для завантаження зображень у потрібному порядку
+    loadImagesBasedOnOrientation();
+
+
+
+
+
     const mediaFiles = document.querySelectorAll('img, video');
     let i = 0
 
-    Array.from(mediaFiles).forEach((file) => {
-        file.onload = () => {
-            i++
+    function fileLoaded() {
+        i++
+        console.log(i);
 
-            let percentage_loaded = ((i * 100) / mediaFiles.length).toFixed(1)
+        let percentage_loaded = ((i * 100) / mediaFiles.length).toFixed(1)
+        console.log(percentage_loaded);
 
-            console.log(percentage_loaded);
-
-            if (percentage_loaded <= 100) {
-                console.log(percents.innerHTML);
-                percents.innerHTML = percentage_loaded;
-                percents_text.textContent = `${percentage_loaded}%`;
-            }
-
-            // Отримуємо всі зображення з контейнера .progress-bar-container
-            const images = document.querySelectorAll('.progress-bar-container img');
-
-            // Загальна кількість зображень у контейнері
-            const totalImages = images.length;
-
-            // Обчислюємо кількість зображень, які мають змінити opacity
-            const numberOfImagesToChange = Math.floor((percentage_loaded / 100) * totalImages);
-
-            // Перебираємо всі зображення і змінюємо opacity
-            images.forEach((img, index) => {
-                if (index < numberOfImagesToChange) {
-                    img.style.opacity = 1; // Зображення буде повністю видимим
-                } else {
-                    img.style.opacity = 0.3; // Інші зображення будуть менш видимими
-                }
-            });
-
-            if(i === mediaFiles.length) {
-                percents.innerHTML = 100
-                percents_text.textContent = `${percentage_loaded}%`;
-
-                setTimeout(() => {
-                    percents_text.style.opacity = 0;
-                    progressBarContainer.style.opacity = 0;
-                    playBtn.style.opacity = 1;
-                }, 1000);
-            }
+        if (percentage_loaded <= 100) {
+            percents_text.textContent = `${percentage_loaded}%`;
         }
-    })
+
+        const images = document.querySelectorAll('.progress-bar-container img');
+        const totalImages = images.length;
+        const numberOfImagesToChange = Math.floor((percentage_loaded / 100) * totalImages);
+
+        images.forEach((img, index) => {
+            if (index < numberOfImagesToChange) {
+                img.style.opacity = 1;
+            } else {
+                img.style.opacity = 0.3;
+            }
+        });
+
+        if(i === mediaFiles.length) {
+            percents_text.textContent = `${percentage_loaded}%`;
+        }
+    }
 
 })
 
@@ -615,7 +728,7 @@ function showWinBanner(type, amount) {
 
         if (autoSettings['autoStopped']) {
             const autoButton = document.querySelector('.button-icon.auto');
-            autoButton.src = 'assets/auto_button_on.png';
+            autoButton.src = 'assets-for-gold-bonanza-compressed/auto_button_on.png';
         }
     };
 
@@ -678,39 +791,43 @@ function toggleMute() {
 function setButtonImage(button) {
     const images = {
         auto: {
-            on: 'assets/auto_button_on.png',
-            hover: 'assets/auto_button_on_hover.png',
-            default: 'assets/auto_spin_button.png',
-            hoverDefault: 'assets/auto_button_hover.png'
+            on: 'assets-for-gold-bonanza-compressed/auto_button_on.png',
+            hover: 'assets-for-gold-bonanza-compressed/auto_button_on_hover.png',
+            default: 'assets-for-gold-bonanza-compressed/auto_spin_button.png',
+            hoverDefault: 'assets-for-gold-bonanza-compressed/auto_button_hover.png'
         },
         spin: {
-            on: 'assets/spin_button_on.png',
-            hover: 'assets/spin_button_on_hover.png',
-            default: 'assets/spin_button.png',
-            hoverDefault: 'assets/spin_button_hover.png'
+            on: 'assets-for-gold-bonanza-compressed/spin_button_on.png',
+            hover: 'assets-for-gold-bonanza-compressed/spin_button_on_hover.png',
+            default: 'assets-for-gold-bonanza-compressed/spin_button.png',
+            hoverDefault: 'assets-for-gold-bonanza-compressed/spin_button_hover.png'
         },
         turbo: {
-            1: { normal: 'assets/turbo_1_button.png', hover: 'assets/turbo_1_button_hover.png' },
-            2: { normal: 'assets/turbo_2_button.png', hover: 'assets/turbo_2_button_hover.png' },
-            3: { normal: 'assets/turbo_3_button.png', hover: 'assets/turbo_3_button_hover.png' }
+            1: { normal: 'assets-for-gold-bonanza-compressed/turbo_1_button.png', hover: 'assets-for-gold-bonanza-compressed/turbo_1_button_hover.png' },
+            2: { normal: 'assets-for-gold-bonanza-compressed/turbo_2_button.png', hover: 'assets-for-gold-bonanza-compressed/turbo_2_button_hover.png' },
+            3: { normal: 'assets-for-gold-bonanza-compressed/turbo_3_button.png', hover: 'assets-for-gold-bonanza-compressed/turbo_3_button_hover.png' }
         },
         volume: {
-            on: 'assets/volume_button.png',
-            hover: 'assets/volume_button_hover.png',
-            off: 'assets/volume_button_off.png',
-            offHover: 'assets/volume_button_off_hover.png'
+            on: 'assets-for-gold-bonanza-compressed/volume_button.png',
+            hover: 'assets-for-gold-bonanza-compressed/volume_button_hover.png',
+            off: 'assets-for-gold-bonanza-compressed/volume_button_off.png',
+            offHover: 'assets-for-gold-bonanza-compressed/volume_button_off_hover.png'
         },
         info: {
-            default: 'assets/info_button.png',
-            hover: 'assets/info_button_hover.png'
+            default: 'assets-for-gold-bonanza-compressed/info_button.png',
+            hover: 'assets-for-gold-bonanza-compressed/info_button_hover.png'
         },
         landscapeModeFullScreenModeBtn: {
-            on: 'assets\exit_full-screen_button.png',
-            default: 'assets\open_full-screen_button.png',
+            on: 'assets-for-gold-bonanza-compressed\exit_full-screen_button.png',
+            default: 'assets-for-gold-bonanza-compressed\open_full-screen_button.png',
         },
         FullScreenModeBtn: {
-            on: 'assets\exit_full-screen_button.png',
-            default: 'assets\open_full-screen_button.png',
+            on: 'assets-for-gold-bonanza-compressed\exit_full-screen_button.png',
+            default: 'assets-for-gold-bonanza-compressed\open_full-screen_button.png',
+        },
+        preloaderFullScreenModeBtn: {
+            on: 'assets-for-gold-bonanza-compressed\exit_full-screen_button.png',
+            default: 'assets-for-gold-bonanza-compressed\open_full-screen_button.png',
         },
     };
 
@@ -728,6 +845,8 @@ function setButtonImage(button) {
         button.src = buttonStates.fullScreenMode ? images.landscapeModeFullScreenModeBtn.on : images.landscapeModeFullScreenModeBtn.default;
     } else if (button.classList.contains('FullScreenModeBtn')) {
         button.src = buttonStates.fullScreenMode ? images.FullScreenModeBtn.on : images.FullScreenModeBtn.default;
+    } else if (button.classList.contains('preloaderFullScreenModeBtn')) {
+        button.src = buttonStates.fullScreenMode ? images.preloaderFullScreenModeBtn.on : images.preloaderFullScreenModeBtn.default;
     }
 }
 
@@ -882,29 +1001,87 @@ switchButton.setAttribute('data-original-src', switchButton.src);
 
 
 window.onload = () => {
+    console.log('Page loaded!');
+
+    const percents_text = document.getElementById('percents');
+    const progressBarContainer = document.getElementById('progress-bar-container');
+    const playBtn = document.querySelector('.play-btn img');
+
+    loadAllMediaWithRetries().then(() => {
+        document.body.style.backgroundImage = "url('assets-for-gold-bonanza-compressed/gold-bonanza-background.jpg')";
+
+        const reels = document.querySelectorAll('.reel');
+
+        reels.forEach((reel) => {
+            reel.style.backgroundImage = "url('assets-for-gold-bonanza-compressed/golden_reel_bigger.png')";
+        });
+        
+
+        const images = document.querySelectorAll('.progress-bar-container img');
+
+        images.forEach((img) => {
+            img.style.opacity = 1;
+        });
+
+        percents_text.textContent = `100.00%`;
+
+        setTimeout(() => {
+            percents_text.style.opacity = 0;
+            progressBarContainer.style.opacity = 0;
+            playBtn.style.opacity = 1;
+        }, 2000);
+
+        console.log("Усі файли завантажені");
+        // Код після повного завантаження
+    }).catch(error => {
+        console.error(error);
+    });
+
     // Оновлення відображення ставки при завантаженні сторінки
     updateBetValue();
 
+    const playButton = document.querySelector('.play-btn');
+    const playButtonImg = document.querySelector('.play-btn img');
     const leverButton = document.querySelector('.lever');
     const autoButton = document.querySelector('.button-icon.auto');
     const spinButton = document.querySelector('.button-icon.spin');
     const turboButton = document.querySelector('.button-icon.turbo');
     const volumeButton = document.querySelector('.button-icon.volume');
     const infoButton = document.querySelector('.button-icon.info');
+    const closeButton = document.querySelector('.close-btn img');
 
     paylineElements.forEach(payline => {
         payline.style.display = 'none'; // Приховуємо всі лінії на старті
     });
 
+    playButton.onclick = () => {
+        console.log('playButton clicked!');
+        hidePreloader();
+    };
+
     leverButton.onmouseenter = () => {
-        leverButton.src = 'assets/bent_lever_for_advanced_auto_hover.png';
+        leverButton.src = 'assets-for-gold-bonanza-compressed/bent_lever_for_advanced_auto_hover.png';
     };
     leverButton.onmouseleave = () => {
-        leverButton.src = 'assets/bent_lever_for_advanced_auto.png';
+        leverButton.src = 'assets-for-gold-bonanza-compressed/bent_lever_for_advanced_auto.png';
+    };
+
+    playButtonImg.onmouseenter = () => {
+        playButtonImg.src = 'assets-for-gold-bonanza-compressed/play_button_hover.png';
+    };
+    playButtonImg.onmouseleave = () => {
+        playButtonImg.src = 'assets-for-gold-bonanza-compressed/play_button.png';
+    };
+
+    closeButton.onmouseenter = () => {
+        closeButton.src = 'assets-for-gold-bonanza-compressed/close_button_hover.png';
+    };
+    closeButton.onmouseleave = () => {
+        closeButton.src = 'assets-for-gold-bonanza-compressed/close_button.png';
     };
 
     autoButton.onmouseenter = () => {
-        autoButton.src = buttonStates.auto ? 'assets/auto_button_on_hover.png' : 'assets/auto_button_hover.png';
+        autoButton.src = buttonStates.auto ? 'assets-for-gold-bonanza-compressed/auto_button_on_hover.png' : 'assets-for-gold-bonanza-compressed/auto_button_hover.png';
     };
     autoButton.onmouseleave = () => {
         setButtonImage(autoButton);
@@ -923,7 +1100,7 @@ window.onload = () => {
     };
 
     spinButton.onmouseenter = () => {
-        spinButton.src = buttonStates.spin ? 'assets/spin_button_on_hover.png' : 'assets/spin_button_hover.png';
+        spinButton.src = buttonStates.spin ? 'assets-for-gold-bonanza-compressed/spin_button_on_hover.png' : 'assets-for-gold-bonanza-compressed/spin_button_hover.png';
     };
     spinButton.onmouseleave = () => {
         setButtonImage(spinButton);
@@ -939,7 +1116,7 @@ window.onload = () => {
 
 
     turboButton.onmouseenter = () => {
-        turboButton.src = `assets/turbo_${buttonStates.turbo}_button_hover.png`;
+        turboButton.src = `assets-for-gold-bonanza-compressed/turbo_${buttonStates.turbo}_button_hover.png`;
     };
     turboButton.onmouseleave = () => {
         setButtonImage(turboButton);
@@ -947,7 +1124,7 @@ window.onload = () => {
     turboButton.onclick = () => changeImage(turboButton, 'turbo');
 
     volumeButton.onmouseenter = () => {
-        volumeButton.src = buttonStates.volume ? 'assets/volume_button_hover.png' : 'assets/volume_button_off_hover.png';
+        volumeButton.src = buttonStates.volume ? 'assets-for-gold-bonanza-compressed/volume_button_hover.png' : 'assets-for-gold-bonanza-compressed/volume_button_off_hover.png';
     };
     volumeButton.onmouseleave = () => {
         setButtonImage(volumeButton);
@@ -955,7 +1132,7 @@ window.onload = () => {
     volumeButton.onclick = () => changeImage(volumeButton, 'volume');
 
     infoButton.onmouseenter = () => {
-        infoButton.src = 'assets/info_button_hover.png';
+        infoButton.src = 'assets-for-gold-bonanza-compressed/info_button_hover.png';
     };
     infoButton.onmouseleave = () => {
         setButtonImage(infoButton);
@@ -993,13 +1170,33 @@ window.onload = () => {
 
 
 
+    const preloaderFullScreenModeBtn = document.querySelector('.preloader-full-screen-mode-btn img');
+
+    preloaderFullScreenModeBtn.onmouseenter = () => {
+        preloaderFullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets-for-gold-bonanza-compressed/exit_full-screen_button_hover.png' : 'assets-for-gold-bonanza-compressed/open_full-screen_button_hover.png';
+    };
+    preloaderFullScreenModeBtn.onmouseleave = () => {
+        preloaderFullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets-for-gold-bonanza-compressed/exit_full-screen_button.png' : 'assets-for-gold-bonanza-compressed/open_full-screen_button.png';
+    };
+    preloaderFullScreenModeBtn.onclick = () => {
+        if (buttonStates['fullScreenMode']) {
+            exitFullscreen();
+        } else {
+            openFullscreen();
+        }
+
+        setButtonImage(preloaderFullScreenModeBtn);
+    };
+
+
+
     const landscapeModeFullScreenModeBtn = document.querySelector('.landscape-mode-full-screen-mode-btn img');
 
     landscapeModeFullScreenModeBtn.onmouseenter = () => {
-        landscapeModeFullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets/exit_full-screen_button_hover.png' : 'assets/open_full-screen_button_hover.png';
+        landscapeModeFullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets-for-gold-bonanza-compressed/exit_full-screen_button_hover.png' : 'assets-for-gold-bonanza-compressed/open_full-screen_button_hover.png';
     };
     landscapeModeFullScreenModeBtn.onmouseleave = () => {
-        landscapeModeFullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets/exit_full-screen_button.png' : 'assets/open_full-screen_button.png';
+        landscapeModeFullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets-for-gold-bonanza-compressed/exit_full-screen_button.png' : 'assets-for-gold-bonanza-compressed/open_full-screen_button.png';
     };
     landscapeModeFullScreenModeBtn.onclick = () => {
         if (buttonStates['fullScreenMode']) {
@@ -1016,10 +1213,10 @@ window.onload = () => {
     const FullScreenModeBtn = document.querySelector('.full-screen-mode-btn img');
 
     FullScreenModeBtn.onmouseenter = () => {
-        FullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets/exit_full-screen_button_hover.png' : 'assets/open_full-screen_button_hover.png';
+        FullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets-for-gold-bonanza-compressed/exit_full-screen_button_hover.png' : 'assets-for-gold-bonanza-compressed/open_full-screen_button_hover.png';
     };
     FullScreenModeBtn.onmouseleave = () => {
-        FullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets/exit_full-screen_button.png' : 'assets/open_full-screen_button.png';
+        FullScreenModeBtn.src = buttonStates.fullScreenMode ? 'assets-for-gold-bonanza-compressed/exit_full-screen_button.png' : 'assets-for-gold-bonanza-compressed/open_full-screen_button.png';
     };
     FullScreenModeBtn.onclick = () => {
         if (buttonStates['fullScreenMode']) {
@@ -1037,8 +1234,8 @@ window.onload = () => {
         if(window.innerHeight == screen.height && buttonStates.fullScreenMode === false){
             fullScreenModeActivated = true;
             buttonStates.fullScreenMode = true;
-            FullScreenModeBtn.src = 'assets/exit_full-screen_button.png';
-            landscapeModeFullScreenModeBtn.src = 'assets/exit_full-screen_button.png';
+            FullScreenModeBtn.src = 'assets-for-gold-bonanza-compressed/exit_full-screen_button.png';
+            landscapeModeFullScreenModeBtn.src = 'assets-for-gold-bonanza-compressed/exit_full-screen_button.png';
             FullScreenModeBtn.style.opacity = 0.5;
             landscapeModeFullScreenModeBtn.style.opacity = 0.5;
             FullScreenModeBtn.style.pointerEvents = 'none';
@@ -1051,8 +1248,8 @@ window.onload = () => {
         } else if (fullScreenModeActivated) {
             fullScreenModeActivated = false;
             buttonStates.fullScreenMode = false;
-            FullScreenModeBtn.src = 'assets/open_full-screen_button.png';
-            landscapeModeFullScreenModeBtn.src = 'assets/open_full-screen_button.png';
+            FullScreenModeBtn.src = 'assets-for-gold-bonanza-compressed/open_full-screen_button.png';
+            landscapeModeFullScreenModeBtn.src = 'assets-for-gold-bonanza-compressed/open_full-screen_button.png';
             FullScreenModeBtn.style.opacity = 1;
             landscapeModeFullScreenModeBtn.style.opacity = 1;
             FullScreenModeBtn.style.pointerEvents = 'auto';

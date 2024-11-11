@@ -13,8 +13,6 @@
     --button-hover-scale: 1.1;
     --change-button-hover-scale: 1.15;
     --corner-button-hover-scale: 1.1;
-    --close-btn-hover-image: url('assets/close_button_hover.png');
-    --play-btn-hover-image: url('assets/play_button_hover.png');
     --animation-duration: 0.3s;
     --animation-ease: ease-out;
     --pulse-color-primary: rgba(222, 11, 11, 1);
@@ -53,7 +51,7 @@ html, body {
 }
 
 body {
-    background-image: url('assets/gold-bonanza-background.jpg');
+    /* background-image: url('assets-for-gold-bonanza-compressed/gold-bonanza-background.jpg'); */
     /* background: linear-gradient(45deg, var(--primary-color) 0%, var(--secondary-color) 100%); */
     background-attachment: fixed;
     background-size: cover;
@@ -72,6 +70,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: var(--container-gap);
+    opacity: 0;
 }
 
 .game-area {
@@ -94,7 +93,7 @@ body {
 .reel {
     width: var(--icon-width);
     height: calc(3 * var(--icon-height));
-    background-image: url('assets/golden_reel_bigger.png');
+    /* background-image: url('assets-for-gold-bonanza-compressed/golden_reel_bigger.png'); */
     background-size: 12.5vw calc(var(--icon-height) * var(--num-icons));
     background-repeat: repeat-y;
     background-position: 0 0;
@@ -387,10 +386,6 @@ body {
 .close-btn img {
     width: 7.97vw;  /* Встановлюємо адаптивну ширину */
     height: auto;   /* Висота автоматично визначається пропорційно ширині */
-}
-
-.close-btn:hover img {
-    content: var(--close-btn-hover-image);
 }
 
 .close-btn:active img {
@@ -827,7 +822,7 @@ body {
     cursor: pointer; /* Залишаємо курсор у вигляді руки для клікабельності */
 }
 
-.landscape-mode-full-screen-mode-btn {
+.landscape-mode-full-screen-mode-btn, .preloader-full-screen-mode-btn {
     background-color: transparent; /* Робимо фон кнопки прозорим */
     border: none; /* (Не обов'язково) Прибираємо рамку, якщо вона не потрібна */
     position: absolute;
@@ -841,10 +836,24 @@ body {
     transform: scale(var(--corner-button-hover-scale));
 }
 
+.preloader-full-screen-mode-btn:hover {
+    transform: scale(var(--corner-button-hover-scale));
+}
+
 .landscape-mode-full-screen-mode-btn img {
     width: 9vw;
     height: 9vw;
     cursor: pointer; /* Залишаємо курсор у вигляді руки для клікабельності */
+}
+
+.preloader-full-screen-mode-btn img {
+    width: 9vw;
+    height: 9vw;
+    cursor: pointer; /* Залишаємо курсор у вигляді руки для клікабельності */
+}
+
+.preloader-full-screen-mode-btn {
+    z-index: 1001;
 }
 
 .background-image {
@@ -857,9 +866,7 @@ body {
     z-index: -1; /* Розташовуємо зображення на задньому фоні */
 }
 
-
-
-.preloader img {
+.preloader__loader img {
     position: fixed;
     top: 0;
     left: 0;
@@ -912,7 +919,6 @@ body {
 }
 
 .play-btn img:hover {
-    content: var(--play-btn-hover-image);
     transform: scale(var(--button-hover-scale));
 }
 
