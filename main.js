@@ -925,64 +925,6 @@ function pullLever(leverElement) {
 }
 
 
-let selectedNumberOfRoundsButton = null;
-let selectedLoseLimitButton = null;
-
-// Функція для кнопок "number-of-rounds"
-const numberOfRoundsButtons = document.querySelectorAll('.number-of-rounds .setting-button');
-
-numberOfRoundsButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        if (selectedNumberOfRoundsButton && selectedNumberOfRoundsButton !== button) {
-            // Повертаємо попередню кнопку до початкового стану
-            selectedNumberOfRoundsButton.src = selectedNumberOfRoundsButton.getAttribute('data-original-src');
-        }
-
-        if (selectedNumberOfRoundsButton !== button) {
-            // Зберігаємо поточну кнопку як вибрану
-            selectedNumberOfRoundsButton = button;
-            // Змінюємо зображення на вибране
-            button.src = button.getAttribute('data-selected-src');
-        }
-
-        const autoInfoElement = document.querySelector('.auto-info');
-        let numberOfRounds = /^[0-9]+$/.test(button.id.split('-')[0]) ? parseInt(button.id.split('-')[0], 10) : button.id.split('-')[0];
-
-        if (numberOfRounds === 'endless') {
-            autoInfoElement.style.fontSize = '6.51vw';
-            autoInfoElement.textContent = '∞';
-            autoSettings['numberOfRounds'] = 0;
-        } else {
-            autoInfoElement.style.fontSize = '2.86vw';
-            autoInfoElement.textContent = numberOfRounds;
-            autoSettings['numberOfRounds'] = numberOfRounds;
-        }
-    });
-
-    // Зберігаємо початкове зображення в атрибуті
-    button.setAttribute('data-original-src', button.src);
-});
-
-// Функція для кнопки "switch-button"
-const switchButton = document.getElementById('switch-button');
-let isSwitchButtonSelected = false;
-
-switchButton.addEventListener('click', () => {
-    if (isSwitchButtonSelected) {
-        // Якщо кнопка вже вибрана, повертаємо початкове зображення
-        switchButton.src = switchButton.getAttribute('data-original-src');
-        autoSettings['stopAfterBigPayout'] = false;
-    } else {
-        // Якщо кнопка не вибрана, змінюємо на вибране зображення
-        switchButton.src = switchButton.getAttribute('data-selected-src');
-        autoSettings['stopAfterBigPayout'] = true;
-    }
-    isSwitchButtonSelected = !isSwitchButtonSelected;
-});
-
-// Зберігаємо початкове зображення для кнопки "switch-button"
-switchButton.setAttribute('data-original-src', switchButton.src);
-
 
 window.onload = () => {
     console.log('Сторінка завантажена!');
@@ -1264,6 +1206,66 @@ window.onload = () => {
         overlay.classList.add('hidden');
         banner.style.display = 'none';
     });
+
+
+
+    let selectedNumberOfRoundsButton = null;
+
+    // Функція для кнопок "number-of-rounds"
+    const numberOfRoundsButtons = document.querySelectorAll('.number-of-rounds .setting-button');
+
+    numberOfRoundsButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (selectedNumberOfRoundsButton && selectedNumberOfRoundsButton !== button) {
+                // Повертаємо попередню кнопку до початкового стану
+                console.log(selectedNumberOfRoundsButton.getAttribute('data-original-src'));
+                selectedNumberOfRoundsButton.src = selectedNumberOfRoundsButton.getAttribute('data-original-src');
+            }
+
+            if (selectedNumberOfRoundsButton !== button) {
+                // Зберігаємо поточну кнопку як вибрану
+                selectedNumberOfRoundsButton = button;
+                // Змінюємо зображення на вибране
+                button.src = button.getAttribute('data-selected-src');
+            }
+
+            const autoInfoElement = document.querySelector('.auto-info');
+            let numberOfRounds = /^[0-9]+$/.test(button.id.split('-')[0]) ? parseInt(button.id.split('-')[0], 10) : button.id.split('-')[0];
+
+            if (numberOfRounds === 'endless') {
+                autoInfoElement.style.fontSize = '6.51vw';
+                autoInfoElement.textContent = '∞';
+                autoSettings['numberOfRounds'] = 0;
+            } else {
+                autoInfoElement.style.fontSize = '2.86vw';
+                autoInfoElement.textContent = numberOfRounds;
+                autoSettings['numberOfRounds'] = numberOfRounds;
+            }
+        });
+
+        // Зберігаємо початкове зображення в атрибуті
+        button.setAttribute('data-original-src', button.src);
+    });
+
+    // Функція для кнопки "switch-button"
+    const switchButton = document.getElementById('switch-button');
+    let isSwitchButtonSelected = false;
+
+    switchButton.addEventListener('click', () => {
+        if (isSwitchButtonSelected) {
+            // Якщо кнопка вже вибрана, повертаємо початкове зображення
+            switchButton.src = switchButton.getAttribute('data-original-src');
+            autoSettings['stopAfterBigPayout'] = false;
+        } else {
+            // Якщо кнопка не вибрана, змінюємо на вибране зображення
+            switchButton.src = switchButton.getAttribute('data-selected-src');
+            autoSettings['stopAfterBigPayout'] = true;
+        }
+        isSwitchButtonSelected = !isSwitchButtonSelected;
+    });
+
+    // Зберігаємо початкове зображення для кнопки "switch-button"
+    switchButton.setAttribute('data-original-src', switchButton.src);
 
     
 
